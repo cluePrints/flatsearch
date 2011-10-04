@@ -13,5 +13,7 @@
 	<classpathentry kind="lib" path="/home/otaman/.m2/repository/com/thoughtworks/xstream/xstream/1.4.1/xstream-1.4.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/db4o-8.0.184.15484-core-java5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/home/otaman/.m2/repository/joda-time/joda-time/2.0/joda-time-2.0.jar"/>
+	<classpathentry kind="lib" path="/home/otaman/.m2/repository/org/easymock/easymock/3.0/easymock-3.0.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
