@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="test-classes" path="test"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/otaman/Downloads/gwt-maps.jar"/>
+	<classpathentry kind="lib" path="/home/otaman/.m2/repository/com/google/guava/guava/10.0-rc3/guava-10.0-rc3.jar"/>
+	<classpathentry kind="lib" path="/home/otaman/.m2/repository/ch/qos/logback/logback-core/0.9.28/logback-core-0.9.28.jar"/>
+	<classpathentry kind="lib" path="/home/otaman/.m2/repository/ch/qos/logback/logback-classic/0.9.28/logback-classic-0.9.28.jar"/>
+	<classpathentry kind="lib" path="/home/otaman/Downloads/slf4j-1.6.2/slf4j-simple-1.6.2.jar"/>
+	<classpathentry kind="lib" path="/home/otaman/Downloads/slf4j-1.6.2/slf4j-api-1.6.2.jar"/>
+	<classpathentry kind="lib" path="/home/otaman/.m2/repository/com/thoughtworks/xstream/xstream/1.4.1/xstream-1.4.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/db4o-8.0.184.15484-core-java5.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>
