@@ -9,7 +9,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.control.LargeMapControl;
@@ -32,7 +31,6 @@ import com.soboleiv.flatsearch.shared.Place;
  */
 public class Flatsearch implements EntryPoint {
 	
-	@Override
 	public void onModuleLoad() {
 		/*
 		 * Asynchronously loads the Maps API.

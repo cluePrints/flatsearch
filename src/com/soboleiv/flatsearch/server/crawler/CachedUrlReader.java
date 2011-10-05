@@ -1,5 +1,7 @@
 package com.soboleiv.flatsearch.server.crawler;
 
+import java.util.Date;
+
 import org.joda.time.DateTime;
 
 import com.soboleiv.flatsearch.server.db.DataStore;
@@ -42,6 +44,8 @@ public class CachedUrlReader extends UrlReader {
 	}
 
 	private boolean isExpired(Interaction result) {
+		if (result.getDate() == null)
+			return true;
 		return result.getDate().plusDays(expiryDays).isBeforeNow();
 	}
 }
@@ -49,7 +53,7 @@ public class CachedUrlReader extends UrlReader {
 class Interaction {
 	private String address;
 	private String response;
-	private DateTime date;
+	private Date date;
 
 	public Interaction setAddress(String address) {
 		this.address = address;
@@ -67,7 +71,7 @@ class Interaction {
 
 	public static Interaction stamped() {
 		Interaction res = new Interaction();
-		res.date = new DateTime();
+		res.date = new Date();
 		return res;
 	}
 
@@ -80,6 +84,8 @@ class Interaction {
 	}
 	
 	public DateTime getDate() {
-		return date;
+		if (date == null)
+			return null;
+		return new DateTime(date.getTime());
 	}
 }
