@@ -1,46 +1,34 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.soboleiv</groupId>
-  <artifactId>flatsearch</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>test</testSourceDirectory>
-    <outputDirectory>war/WEB-INF/classes</outputDirectory>
-    <testOutputDirectory>target/test-classes</testOutputDirectory>
-  </build>
-  <properties>
-  	<gwtMapsBindingPath>/home/otaman/Downloads/gwt-maps.jar</gwtMapsBindingPath>
-  </properties>
-  <dependencies>
-  	<dependency>
-  		<groupId>com.google.guava</groupId>
-  		<artifactId>guava</artifactId>
-  		<version>10.0</version>
-  		<scope>compile</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.easymock</groupId>
-  		<artifactId>easymock</artifactId>
-  		<version>3.0</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>joda-time</groupId>
-  		<artifactId>joda-time</artifactId>
-  		<version>2.0</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.datanucleus</groupId>
-  		<artifactId>datanucleus-db4o</artifactId>
-  		<version>3.0.1</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.google.google-apis</groupId>
-  		<artifactId>gwt-maps</artifactId>
-  		<version>REBUILT-FROM-TRUNK</version>
-  		<systemPath>${gwtMapsBindingPath}</systemPath>
-  		<scope>system</scope>
-  	</dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.soboleiv</groupId>
+	<artifactId>flatsearch</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+		<outputDirectory>war/WEB-INF/classes</outputDirectory>
+		<testOutputDirectory>target/test-classes</testOutputDirectory>
+	</build>
+	<properties>
+		<gwtMapsBindingPath>D:\Repositories\git\flatsearch\lib\gwt-maps.jar</gwtMapsBindingPath>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>datanucleus-db4o</artifactId>
+			<version>3.0.1</version>
+		</dependency>
   	<dependency>
   		<groupId>ch.qos.logback</groupId>
   		<artifactId>logback-core</artifactId>
@@ -56,5 +44,22 @@
   		<artifactId>slf4j-api</artifactId>
   		<version>1.6.2</version>
   	</dependency>
-  </dependencies>
+  	<dependency>
+  		<groupId>com.google.guava</groupId>
+  		<artifactId>guava</artifactId>
+  		<version>10.0</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.google.gwt</groupId>
+  		<artifactId>gwt-user</artifactId>
+  		<version>2.4.0</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.google.gwt.google-apis</groupId>
+  		<artifactId>gwt-maps</artifactId>
+  		<version>BUILT FROM TRUNK FOR GWT 2.2.0</version>
+  		<scope>system</scope>
+  		<systemPath>${gwtMapsBindingPath}</systemPath>
+  	</dependency>
+	</dependencies>
 </project>
