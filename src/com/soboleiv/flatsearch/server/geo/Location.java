@@ -17,6 +17,14 @@ public class Location {
 	}
 	
 	public static final Location INVALID = new Location(){
+		public double getLatitude() {
+			throw new RuntimeException("");
+		};
+		
+		@Override
+		public double getLongitude() {
+			throw new RuntimeException("");
+		}
 		
 	};
 	@Override

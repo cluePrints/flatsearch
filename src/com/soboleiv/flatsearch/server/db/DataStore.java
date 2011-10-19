@@ -10,19 +10,23 @@ public class DataStore<V> {
 	private EmbeddedObjectContainer db;
 	
 	public V getByExample(V ex){
-		try {
-		    ObjectSet<Object> queryResults = db.queryByExample(ex);
-		    if (queryResults.size() == 0)
-		    	return null;
-			return (V) queryResults.get(0);
-		} finally {
-		    db.commit();
-		}
+	    ObjectSet<Object> queryResults = db.queryByExample(ex);
+	    if (queryResults.size() == 0)
+	    	return null;
+		return (V) queryResults.get(0);
 	}
 	
 	public void save(V val) {		
 		try {
 		    db.store(val);
+		} finally {
+		    db.commit();
+		}
+	}
+	
+	public void remove(V val) {		
+		try {
+		    db.delete(val);
 		} finally {
 		    db.commit();
 		}

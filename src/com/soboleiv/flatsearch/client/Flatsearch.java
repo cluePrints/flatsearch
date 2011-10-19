@@ -174,7 +174,7 @@ public class Flatsearch implements EntryPoint {
 							public void onSuccess(Collection<Place> result) {
 								
 								
-								for (Place place : result) {
+								Place place = result.iterator().next();
 								LatLng cawkerCity = LatLng.newInstance(place.getLat(), place.getLon());
 								
 								// TODO: sign of utter stupidity
@@ -183,13 +183,11 @@ public class Flatsearch implements EntryPoint {
 
 								// Add a marker
 								MarkerOptions options = MarkerOptions.newInstance();
-								options.setTitle("Test title");
+								options.setTitle(place.getAddress());
 								Marker marker = new Marker(cawkerCity, options);
 								
-								map.addOverlay(marker);
-								
-								map.setCenter(cawkerCity);
-								}
+								map.addOverlay(marker);							
+								//}
 								
 								
 								/*dialogBox.setText("Remote Procedure Call");

@@ -58,7 +58,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		c.start();
 		
 		List<CrawledResult> data = pack(c);
-		List<Place> places = lookup(locSvc, data);
+		List<Place> places = lookup(data);
 
 		return places;
 	}
@@ -74,23 +74,34 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		return locSvc;
 	}
 
-	public List<Place> lookup(LocationSvcFacade locSvc, List<CrawledResult> data) {
+	public List<Place> lookup(List<CrawledResult> data) {
 		List<Place> places = Lists.newLinkedList();
 		for (CrawledResult item : data){
 			int idx = data.indexOf(item);
 			log.info("{}",idx);
 			
+			convertAndAddIfValid(item, places);
+		}
+		return places;
+	}
+
+	private void convertAndAddIfValid(CrawledResult item, List<Place> places) {
+		try {
 			String url = item.getAddress();
 			Location location = locSvc.get(url);
+			
+			if (location == Location.INVALID)
+				return;
 			
 			Place place = new Place();
 			place.setLat(location.getLatitude());
 			place.setLon(location.getLongitude());
 			place.setUrl(url);
-			place.setAddress(item.getAddress());
+			place.setAddress(item.getAddress());			
 			places.add(place);
+		} catch (Exception ex) {
+			log.error("We've got a problem", ex);
 		}
-		return places;
 	}
 
 	public List<CrawledResult> pack(Crawler c) {

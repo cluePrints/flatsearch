@@ -3,10 +3,14 @@ package com.soboleiv.flatsearch.server.crawler;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.soboleiv.flatsearch.server.GreetingServiceImpl;
 import com.soboleiv.flatsearch.server.db.DataStore;
 
 public class CachedUrlReader extends UrlReader {
+	private Logger log = LoggerFactory.getLogger(CachedUrlReader.class);
 	private UrlReader urlReader;
 	DataStore<Interaction> store = new DataStore<Interaction>();
 	private int expiryDays = Integer.MAX_VALUE;
@@ -40,8 +44,12 @@ public class CachedUrlReader extends UrlReader {
 		Interaction ex = Interaction.example().setAddress(address);
 		Interaction result = store.getByExample(ex);
 		if (result != null) {
-			if (isExpired(result)) {;
+			if (isExpired(result)) {;				
+				store.remove(result);
+				log.debug("Cache entry was expired - removing.");				
 				result = null;
+			} else {
+				log.debug("Serving result from cache");
 			}
 		}
 		return result;

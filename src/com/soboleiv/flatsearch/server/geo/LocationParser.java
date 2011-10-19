@@ -17,6 +17,9 @@ public class LocationParser {
 			if ("REQUEST_DENIED".equalsIgnoreCase(requestType)) {
 				return Location.INVALID;
 			}
+			if ("ZERO_RESULTS".equalsIgnoreCase(requestType)) {
+				return Location.INVALID;
+			}
 			String lat = xpath.evaluate("/GeocodeResponse/result/geometry/location/lat", src(xml));
 			String lng = xpath.evaluate("/GeocodeResponse/result/geometry/location/lng", src(xml));
 			Location result = new Location();
