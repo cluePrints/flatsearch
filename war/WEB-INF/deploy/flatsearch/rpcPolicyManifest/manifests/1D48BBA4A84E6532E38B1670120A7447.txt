@@ -1,2 +1,0 @@
-serviceClass: com.soboleiv.flatsearch.client.GreetingService
-path: 18802C694576E6E7A51E57ABC6350B23.gwt.rpc
