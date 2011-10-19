@@ -9,4 +9,12 @@ public class LocationSvcFacade {
 		String content = reader.getByAddress(address);
 		return parser.parse(content);
 	}
+	
+	public void setReader(LocationSvcReader reader) {
+		this.reader = reader;
+	}
+	
+	public LocationSvcReader getReader() {
+		return reader;
+	}
 }

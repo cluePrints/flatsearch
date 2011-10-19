@@ -5,7 +5,8 @@ import java.net.URLEncoder;
 import com.soboleiv.flatsearch.server.crawler.UrlReader;
 
 public class LocationSvcReader {
-	private UrlReader urlReader = new UrlReader();
+	UrlReader urlReader = new UrlReader();
+	
 	public String getByAddress(String address) {
 		try {
 			String encodedAddress = URLEncoder.encode(address, "UTF-8");
@@ -14,5 +15,9 @@ public class LocationSvcReader {
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+	
+	public void setUrlReader(UrlReader urlReader) {
+		this.urlReader = urlReader;
 	}
 }

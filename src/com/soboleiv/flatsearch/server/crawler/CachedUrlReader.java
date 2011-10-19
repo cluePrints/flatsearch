@@ -8,7 +8,7 @@ import com.soboleiv.flatsearch.server.db.DataStore;
 
 public class CachedUrlReader extends UrlReader {
 	private UrlReader urlReader;
-	private DataStore<Interaction> store = new DataStore<Interaction>();
+	DataStore<Interaction> store = new DataStore<Interaction>();
 	private int expiryDays = Integer.MAX_VALUE;
 	
 	public CachedUrlReader(UrlReader urlReader) {
@@ -31,6 +31,10 @@ public class CachedUrlReader extends UrlReader {
 	public void setExpiryDays(int expiryDays) {
 		this.expiryDays = expiryDays;
 	}
+	
+	public void setStore(DataStore<Interaction> store) {
+		this.store = store;
+	}
 
 	private Interaction getFromCache(String address) {
 		Interaction ex = Interaction.example().setAddress(address);
@@ -48,44 +52,44 @@ public class CachedUrlReader extends UrlReader {
 			return true;
 		return result.getDate().plusDays(expiryDays).isBeforeNow();
 	}
-}
-
-class Interaction {
-	private String address;
-	private String response;
-	private Date date;
-
-	public Interaction setAddress(String address) {
-		this.address = address;
-		return this;
-	}
 	
-	public Interaction setResponse(String response) {
-		this.response = response;
-		return this;
-	}
+	public static class Interaction {
+		private String address;
+		private String response;
+		private Date date;
 
-	public static Interaction example() {
-		return new Interaction();
-	}
+		public Interaction setAddress(String address) {
+			this.address = address;
+			return this;
+		}
+		
+		public Interaction setResponse(String response) {
+			this.response = response;
+			return this;
+		}
 
-	public static Interaction stamped() {
-		Interaction res = new Interaction();
-		res.date = new Date();
-		return res;
-	}
+		public static Interaction example() {
+			return new Interaction();
+		}
 
-	public String getAddress() {
-		return address;
-	}
+		public static Interaction stamped() {
+			Interaction res = new Interaction();
+			res.date = new Date();
+			return res;
+		}
 
-	public String getResponse() {
-		return response;
-	}
-	
-	public DateTime getDate() {
-		if (date == null)
-			return null;
-		return new DateTime(date.getTime());
+		public String getAddress() {
+			return address;
+		}
+
+		public String getResponse() {
+			return response;
+		}
+		
+		public DateTime getDate() {
+			if (date == null)
+				return null;
+			return new DateTime(date.getTime());
+		}
 	}
 }

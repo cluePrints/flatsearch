@@ -7,36 +7,57 @@ import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.io.MemoryStorage;
 
 public class DataStore<V> {
-	public static boolean inMemory = false;
+	private EmbeddedObjectContainer db;
 	
 	public V getByExample(V ex){
-		EmbeddedObjectContainer db = open();
 		try {
 		    ObjectSet<Object> queryResults = db.queryByExample(ex);
 		    if (queryResults.size() == 0)
 		    	return null;
 			return (V) queryResults.get(0);
 		} finally {
-		    db.close();
+		    db.commit();
 		}
 	}
+	
+	public void save(V val) {		
+		try {
+		    db.store(val);
+		} finally {
+		    db.commit();
+		}
+	}
+	
+	public static <V> DataStore<V> forTests() {
+		DataStore<V> res = new DataStore<V>();
+		res.db = open(true);
+		res.removeAll();
+		return res;
+	}
+	
+	public static <V> DataStore<V> persistent() {
+		DataStore<V> res = new DataStore<V>();
+		res.db = open(false);
+		res.removeAll();
+		return res;
+	}
 
-	public EmbeddedObjectContainer open() {
+	private static EmbeddedObjectContainer open(boolean inMemory) {
 		EmbeddedConfiguration configuration = Db4oEmbedded.newConfiguration();
 		if (inMemory) {
 			MemoryStorage memory = new MemoryStorage();
 			configuration.file().storage(memory);
 		}
-		return Db4oEmbedded.openFile(configuration, "database.db4o");
+		EmbeddedObjectContainer container = Db4oEmbedded.openFile(configuration, "db4o");
+		return container;
 	}
-	
-	public void save(V val) {
-		EmbeddedObjectContainer db = open();
-		
-		try {
-		    db.store(val);
-		} finally {
-		    db.close();
-		}
+
+	private void removeAll() {
+		ObjectSet<?> objects = db.queryByExample(null);
+	    for (Object object : objects) {
+	        db.delete(object);
+	    }
+	    db.commit();
 	}
+
 }
