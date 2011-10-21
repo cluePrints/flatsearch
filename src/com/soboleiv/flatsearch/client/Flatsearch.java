@@ -171,23 +171,21 @@ public class Flatsearch implements EntryPoint {
 								closeButton.setFocus(true);
 							}
 
-							public void onSuccess(Collection<Place> result) {
-								
-								
-								Place place = result.iterator().next();
-								LatLng cawkerCity = LatLng.newInstance(place.getLat(), place.getLon());
-								
+							public void onSuccess(Collection<Place> result) {								
 								// TODO: sign of utter stupidity
 								MapWidget map = (MapWidget) RootPanel.get("mapsTutorial").getWidget(0);
 								map.clearOverlays();
 
-								// Add a marker
-								MarkerOptions options = MarkerOptions.newInstance();
-								options.setTitle(place.getAddress());
-								Marker marker = new Marker(cawkerCity, options);
-								
-								map.addOverlay(marker);							
-								//}
+								for (Place place : result) {
+									LatLng markerPos = LatLng.newInstance(place.getLat(), place.getLon());
+																	
+									// Add a marker
+									MarkerOptions options = MarkerOptions.newInstance();
+									options.setTitle(place.getAddress());
+									Marker marker = new Marker(markerPos, options);
+									
+									map.addOverlay(marker);							
+								}
 								
 								
 								/*dialogBox.setText("Remote Procedure Call");

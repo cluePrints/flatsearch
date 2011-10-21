@@ -6,6 +6,7 @@ public class LocationSvcFacade {
 	
 	public Location get(String address)
 	{
+		address="Киев "+address;
 		String content = reader.getByAddress(address);
 		return parser.parse(content);
 	}
