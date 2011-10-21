@@ -42,7 +42,6 @@ public class DataStore<V> {
 	public static <V> DataStore<V> persistent() {
 		DataStore<V> res = new DataStore<V>();
 		res.db = open(false);
-		res.removeAll();
 		return res;
 	}
 
