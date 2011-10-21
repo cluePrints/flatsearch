@@ -2,12 +2,10 @@ package com.soboleiv.flatsearch.server;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.soboleiv.flatsearch.client.GreetingService;
@@ -17,7 +15,6 @@ import com.soboleiv.flatsearch.server.crawler.CrawledResult;
 import com.soboleiv.flatsearch.server.crawler.Crawler;
 import com.soboleiv.flatsearch.server.crawler.UrlReader;
 import com.soboleiv.flatsearch.server.db.DataStore;
-import com.soboleiv.flatsearch.server.geo.BatchLocationRequest;
 import com.soboleiv.flatsearch.server.geo.Location;
 import com.soboleiv.flatsearch.server.geo.LocationSvcFacade;
 import com.soboleiv.flatsearch.server.geo.LocationSvcReader;
@@ -41,7 +38,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	private Logger log = LoggerFactory.getLogger(GreetingServiceImpl.class);
 	
 	public Collection<Place> greetServer(String input) throws IllegalArgumentException {
-		log.debug("Processing request by {}",this);
 		// Verify that the input is valid. 
 		if (!FieldVerifier.isValidName(input)) {
 			// If the input is not valid, throw an IllegalArgumentException back to
@@ -58,7 +54,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		userAgent = escapeHtml(userAgent);
 		
 		Crawler c = new Crawler(DATA_REGEXP, LINKS_REGEXP, startPage);
-		c.setMaxHits(1);
+		c.setMaxHits(2);
 		c.start();
 		
 		List<CrawledResult> data = pack(c);
@@ -79,27 +75,33 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	}
 
 	public List<Place> lookup(List<CrawledResult> data) {
-		List<String> addresses = Lists.transform(data, new Function<CrawledResult, String>(){
-			public String apply(CrawledResult arg0) {
-				return arg0.getAddress();
-			}
-		});
-		BatchLocationRequest loc = new BatchLocationRequest(addresses);
-		loc.setCity("Киев");
-		
-		List<Place> places = Lists.newLinkedList();	
-		Map<String, Location> locsAndAddresses = locSvc.getLocationsForAddresses(loc);
-		
-		for (CrawledResult item : data) {
-			String address = item.getAddress();
-			Location location = locsAndAddresses.get(address);
+		List<Place> places = Lists.newLinkedList();
+		for (CrawledResult item : data){
+			int idx = data.indexOf(item);
+			log.info("{}",idx);
+			
+			convertAndAddIfValid(item, places);
+		}
+		return places;
+	}
+
+	private void convertAndAddIfValid(CrawledResult item, List<Place> places) {
+		try {
+			String url = item.getAddress();
+			Location location = locSvc.get(url);
+			
+			if (location == Location.INVALID)
+				return;
+			
 			Place place = new Place();
 			place.setLat(location.getLatitude());
 			place.setLon(location.getLongitude());
-			place.setUrl(item.getUrl());
-			place.setAddress(address);
+			place.setUrl(url);
+			place.setAddress(item.getAddress());			
+			places.add(place);
+		} catch (Exception ex) {
+			log.error("We've got a problem", ex);
 		}
-		return places;
 	}
 
 	public List<CrawledResult> pack(Crawler c) {

@@ -1,7 +1,6 @@
 package com.soboleiv.flatsearch.client;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -173,26 +172,21 @@ public class Flatsearch implements EntryPoint {
 							}
 
 							public void onSuccess(Collection<Place> result) {
+								
+								
+								Place place = result.iterator().next();
+								LatLng cawkerCity = LatLng.newInstance(place.getLat(), place.getLon());
+								
 								// TODO: sign of utter stupidity
 								MapWidget map = (MapWidget) RootPanel.get("mapsTutorial").getWidget(0);
 								map.clearOverlays();
 
-								
-/*								Iterator<Place> iterator = result.iterator();
-								iterator.next();
-								Place place = iterator.next();*/
-								for (Place place : result) {
-								LatLng cawkerCity = LatLng.newInstance(place.getLat(), place.getLon());
-								
 								// Add a marker
 								MarkerOptions options = MarkerOptions.newInstance();
 								options.setTitle(place.getAddress());
 								Marker marker = new Marker(cawkerCity, options);
 								
-								map.addOverlay(marker);
-								map.setZoomLevel(11);
-								map.setCenter(cawkerCity);
-								}
+								map.addOverlay(marker);							
 								//}
 								
 								
