@@ -9,9 +9,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.control.LargeMapControl;
+import com.google.gwt.maps.client.event.MarkerClickHandler;
+import com.google.gwt.maps.client.event.MarkerClickHandler.MarkerClickEvent;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.maps.client.overlay.MarkerOptions;
@@ -30,7 +33,7 @@ import com.soboleiv.flatsearch.shared.Place;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Flatsearch implements EntryPoint {
-	
+
 	public void onModuleLoad() {
 		/*
 		 * Asynchronously loads the Maps API.
@@ -47,19 +50,19 @@ public class Flatsearch implements EntryPoint {
 	}
 
 	MapWidget map;
-	
+
 	private void buildUi() {
 		MapWidget map = new MapWidget();
 		map.setSize("100%", "100%");
 		// Add some controls for the zoom level
 		map.addControl(new LargeMapControl());
-		
+
 		// Add the map to the HTML host page
 		RootPanel.get("mapsTutorial").add(map);
-		
+
 		hahaha();
 	}
-	
+
 	/**
 	 * The message displayed to the user when the server cannot be reached or
 	 * returns an error.
@@ -69,7 +72,8 @@ public class Flatsearch implements EntryPoint {
 			+ "connection and try again.";
 
 	/**
-	 * Create a remote service proxy to talk to the server-side Greeting service.
+	 * Create a remote service proxy to talk to the server-side Greeting
+	 * service.
 	 */
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
@@ -143,7 +147,8 @@ public class Flatsearch implements EntryPoint {
 			}
 
 			/**
-			 * Send the name from the nameField to the server and wait for a response.
+			 * Send the name from the nameField to the server and wait for a
+			 * response.
 			 */
 			private void sendNameToServer() {
 				// First, we validate the input.
@@ -155,7 +160,7 @@ public class Flatsearch implements EntryPoint {
 				}
 
 				// Then, we send the input to the server.
-				//sendButton.setEnabled(false);
+				// sendButton.setEnabled(false);
 				textToServerLabel.setText(textToServer);
 				serverResponseLabel.setText("");
 				greetingService.greetServer(textToServer,
@@ -171,29 +176,51 @@ public class Flatsearch implements EntryPoint {
 								closeButton.setFocus(true);
 							}
 
-							public void onSuccess(Collection<Place> result) {								
+							public void onSuccess(Collection<Place> result) {
 								// TODO: sign of utter stupidity
-								MapWidget map = (MapWidget) RootPanel.get("mapsTutorial").getWidget(0);
+								final MapWidget map = (MapWidget) RootPanel
+										.get("mapsTutorial").getWidget(0);
 								map.clearOverlays();
 
-								for (Place place : result) {
-									LatLng markerPos = LatLng.newInstance(place.getLat(), place.getLon());
-																	
+								LatLng markerPos = null;
+								for (final Place place : result) {
+									markerPos = LatLng.newInstance(
+											place.getLat(), place.getLon());
+
 									// Add a marker
-									MarkerOptions options = MarkerOptions.newInstance();
+									MarkerOptions options = MarkerOptions
+											.newInstance();
 									options.setTitle(place.getAddress());
-									Marker marker = new Marker(markerPos, options);
-									
-									map.addOverlay(marker);							
+									Marker marker = new Marker(markerPos,
+											options);
+									final LatLng currMarkerPos = markerPos;
+									marker.addMarkerClickHandler(new MarkerClickHandler() {
+
+										public void onClick(
+												MarkerClickEvent event) {
+											map.getInfoWindow().open(
+													currMarkerPos,
+													new InfoWindowContent("<a href=\""+place
+															.getUrl()+"\" target=\"_blank\">more</a>"));
+										}
+									});
+
+									map.addOverlay(marker);
 								}
-								
-								
-								/*dialogBox.setText("Remote Procedure Call");
-								serverResponseLabel
-										.removeStyleName("serverResponseLabelError");
-								serverResponseLabel.setHTML(result);
-								dialogBox.center();
-								closeButton.setFocus(true);*/
+
+								if (markerPos != null) {
+									map.setCenter(markerPos);
+									map.setZoomLevel(12);
+								}
+
+								/*
+								 * dialogBox.setText("Remote Procedure Call");
+								 * serverResponseLabel
+								 * .removeStyleName("serverResponseLabelError");
+								 * serverResponseLabel.setHTML(result);
+								 * dialogBox.center();
+								 * closeButton.setFocus(true);
+								 */
 							}
 						});
 			}

@@ -87,8 +87,8 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 	private void convertAndAddIfValid(CrawledResult item, List<Place> places) {
 		try {
-			String url = item.getAddress();
-			Location location = locSvc.get(url);
+			String address = item.getAddress();
+			Location location = locSvc.get(address);
 			
 			if (location == Location.INVALID)
 				return;
@@ -96,7 +96,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 			Place place = new Place();
 			place.setLat(location.getLatitude());
 			place.setLon(location.getLongitude());
-			place.setUrl(url);
+			place.setUrl(item.getUrl());
 			place.setAddress(item.getAddress());			
 			places.add(place);
 		} catch (Exception ex) {
