@@ -1,6 +1,8 @@
-package com.soboleiv.flatsearch.server.geo;
+package com.soboleiv.flatsearch.shared;
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable {
 	private double latitude;
 	private double longitude;
 	public double getLatitude() {

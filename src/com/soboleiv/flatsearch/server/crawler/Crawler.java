@@ -8,8 +8,6 @@ import com.google.common.collect.Sets;
 
 public class Crawler {
 	private RegexpDataMapper<String> linksToFollowRegexp;
-	private RegexpDataMapper<String> datePostedRegexp;
-	private RegexpDataMapper<String[]> dataMapper;
 
 	private List<String> pagesToVisit = Lists.newLinkedList();
 	private Set<String> visited = Sets.newHashSet();
@@ -19,12 +17,10 @@ public class Crawler {
 	
 	private int maxHits = Integer.MAX_VALUE;
 
-	public Crawler(String dataRegexp, String linksToFollowRegexp,
-			String startingPage, String postedDateRegexp) {
+	public Crawler(String linksToFollowRegexp,
+			String startingPage) {
 		super();
-		this.dataMapper = new ToArrayRegexpMapper(dataRegexp);
 		this.linksToFollowRegexp = new ToStringRegexpMapper(linksToFollowRegexp);
-		this.datePostedRegexp = new ToStringRegexpMapper(postedDateRegexp);
 		this.pagesToVisit.add(startingPage);
 	}
 
@@ -62,12 +58,7 @@ public class Crawler {
 			pagesToVisit.addAll(linksToFollow);
 			System.out.println("Added " + linksToFollow.size() + " links to follow.");
 
-			List<String[]> dataFetched = dataMapper.parseData(content);
-			for (String[] item : dataFetched) {
-				data.add(new CrawledResult(item[0], item[1]));
-			}
-			System.out.println("Added " + dataFetched.size() + " data touples.");
-
+			data.add(new CrawledResult(content, url));
 			visited.add(url);
 
 			System.out.println("Progress: " + visited.size() + " done, "

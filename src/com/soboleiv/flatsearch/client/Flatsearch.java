@@ -1,6 +1,6 @@
 package com.soboleiv.flatsearch.client;
 
-import java.util.Collection;
+ import java.util.Collection;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -14,7 +14,6 @@ import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.control.LargeMapControl;
 import com.google.gwt.maps.client.event.MarkerClickHandler;
-import com.google.gwt.maps.client.event.MarkerClickHandler.MarkerClickEvent;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.maps.client.overlay.MarkerOptions;
@@ -27,6 +26,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.soboleiv.flatsearch.shared.FieldVerifier;
+import com.soboleiv.flatsearch.shared.Location;
 import com.soboleiv.flatsearch.shared.Place;
 
 /**
@@ -184,8 +184,9 @@ public class Flatsearch implements EntryPoint {
 
 								LatLng markerPos = null;
 								for (final Place place : result) {
+									Location coordinates = place.getCoordinates();
 									markerPos = LatLng.newInstance(
-											place.getLat(), place.getLon());
+											coordinates.getLatitude(), coordinates.getLongitude());
 
 									// Add a marker
 									MarkerOptions options = MarkerOptions
@@ -198,10 +199,12 @@ public class Flatsearch implements EntryPoint {
 
 										public void onClick(
 												MarkerClickEvent event) {
+											PlaceFormatter places = new PlaceFormatter();
+											InfoWindowContent wnd = new InfoWindowContent(places.format(place));
+											wnd.setMaxWidth(200);
 											map.getInfoWindow().open(
 													currMarkerPos,
-													new InfoWindowContent("<a href=\""+place
-															.getUrl()+"\" target=\"_blank\">more</a>"));
+													wnd);
 										}
 									});
 

@@ -1,5 +1,7 @@
 package com.soboleiv.flatsearch.server.geo;
 
+import com.soboleiv.flatsearch.shared.Location;
+
 public class LocationSvcFacade {
 	LocationParser parser = new LocationParser();
 	LocationSvcReader reader = new LocationSvcReader();

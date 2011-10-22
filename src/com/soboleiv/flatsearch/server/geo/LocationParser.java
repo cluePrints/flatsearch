@@ -8,6 +8,8 @@ import javax.xml.xpath.XPathFactory;
 
 import org.xml.sax.InputSource;
 
+import com.soboleiv.flatsearch.shared.Location;
+
 public class LocationParser {
 	public Location parse(String xml) {
 		try {

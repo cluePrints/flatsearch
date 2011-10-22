@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import com.soboleiv.flatsearch.server.geo.Location;
 import com.soboleiv.flatsearch.server.geo.LocationParser;
+import com.soboleiv.flatsearch.shared.Location;
 
 public class LocationParserTest {
 	LocationParser unit = new LocationParser();

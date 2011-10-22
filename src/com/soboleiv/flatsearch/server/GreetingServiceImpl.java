@@ -15,10 +15,11 @@ import com.soboleiv.flatsearch.server.crawler.CrawledResult;
 import com.soboleiv.flatsearch.server.crawler.Crawler;
 import com.soboleiv.flatsearch.server.crawler.UrlReader;
 import com.soboleiv.flatsearch.server.db.DataStore;
-import com.soboleiv.flatsearch.server.geo.Location;
 import com.soboleiv.flatsearch.server.geo.LocationSvcFacade;
 import com.soboleiv.flatsearch.server.geo.LocationSvcReader;
+import com.soboleiv.flatsearch.server.transorm.SDTransformer;
 import com.soboleiv.flatsearch.shared.FieldVerifier;
+import com.soboleiv.flatsearch.shared.Location;
 import com.soboleiv.flatsearch.shared.Place;
 
 /**
@@ -28,13 +29,11 @@ import com.soboleiv.flatsearch.shared.Place;
 public class GreetingServiceImpl extends RemoteServiceServlet implements
 		GreetingService {
 
-
 	public static final String LINKS_REGEXP = "href=\"(.{0,50}ru/offer/ad/.{0,50}/kiev/page.{0,50})\">";
-	public static final String DATA_REGEXP = "кий</td>\\W+<td   nowrap>(.{0,400})</td>.{0,800}<a href=\"(.{0,100})\" target=\"_blank\">подробнее</a>";
-	public static final String DATE_POSTED_REGEXP = "<td>([0-9.]+)</td>\\s+</tr>\\s+<tr id=\"item";
 	public static final String START_PAGE = "http://www.svdevelopment.com/ru/offer/ad/10/kiev/page/11/";
 	
 	private LocationSvcFacade locSvc = createLocSvc();
+	private SDTransformer transformer = new SDTransformer();
 	
 	private Logger log = LoggerFactory.getLogger(GreetingServiceImpl.class);
 	
@@ -54,11 +53,11 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		input = escapeHtml(input);
 		userAgent = escapeHtml(userAgent);
 		
-		Crawler c = new Crawler(DATA_REGEXP, LINKS_REGEXP, START_PAGE, DATE_POSTED_REGEXP);
+		Crawler c = new Crawler(LINKS_REGEXP, START_PAGE);
 		c.setMaxHits(2);
 		c.start();
 		
-		List<CrawledResult> data = pack(c);
+		List<CrawledResult> data = c.getData();
 		List<Place> places = lookup(data);
 
 		return places;
@@ -88,27 +87,21 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 	private void convertAndAddIfValid(CrawledResult item, List<Place> places) {
 		try {
-			String address = item.getAddress();
-			Location location = locSvc.get(address);
-			
-			if (location == Location.INVALID)
-				return;
-			
-			Place place = new Place();
-			place.setLat(location.getLatitude());
-			place.setLon(location.getLongitude());
-			place.setUrl(item.getUrl());
-			place.setAddress(item.getAddress());			
-			places.add(place);
+			String html = item.getData();
+			List<Place> results = transformer.parse(html);
+			for (Place place : results) {
+				String address = place.getAddress();
+				Location location = locSvc.get(address);
+				
+				if (location == Location.INVALID)
+					return;
+				
+				place.setCoordinates(location);
+				places.add(place);
+			}
 		} catch (Exception ex) {
 			log.error("We've got a problem", ex);
 		}
-	}
-
-	public List<CrawledResult> pack(Crawler c) {
-		List<CrawledResult> res = Lists.newLinkedList();
-		res.addAll(c.getData());
-		return res;
 	}
 
 	/**
