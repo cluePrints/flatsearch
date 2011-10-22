@@ -55,7 +55,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		userAgent = escapeHtml(userAgent);
 		
 		Crawler c = new Crawler(DATA_REGEXP, LINKS_REGEXP, START_PAGE, DATE_POSTED_REGEXP);
-		c.setMaxHits(20);
+		c.setMaxHits(2);
 		c.start();
 		
 		List<CrawledResult> data = pack(c);
