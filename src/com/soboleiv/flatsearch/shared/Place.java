@@ -10,7 +10,7 @@ public class Place implements Serializable{
 	private String address;
 	private Location coordinates;
 	private String postingDate;
-	private String price;
+	private int priceUsd;
 	private int roomsNumber;
 	public String getOriginalUrl() {
 		return originalUrl;
@@ -42,10 +42,10 @@ public class Place implements Serializable{
 	public void setRoomsNumber(int roomsNumber) {
 		this.roomsNumber = roomsNumber;
 	}	
-	public String getPrice() {
-		return price;
+	public int getPriceUsd() {
+		return priceUsd;
 	}
-	public void setPrice(String price) {
-		this.price = price;
+	public void setPriceUsd(int price) {
+		this.priceUsd = price;
 	}
 }

@@ -6,7 +6,7 @@ public class PlaceFormatter {
 	public String format(Place place) {
 		String result = "<table>";
 		result = addRow(result, "Address", place.getAddress());
-		result = addRow(result, "Price", place.getPrice());
+		result = addRow(result, "Price", place.getPriceUsd());
 		result = addRow(result, "Rooms", place.getRoomsNumber());
 		result = addRow(result, "Posted on", place.getPostingDate());
 		result = addRow(result, "Original", getUrl(place));
