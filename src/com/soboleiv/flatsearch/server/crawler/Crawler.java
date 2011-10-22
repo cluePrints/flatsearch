@@ -8,6 +8,7 @@ import com.google.common.collect.Sets;
 
 public class Crawler {
 	private RegexpDataMapper<String> linksToFollowRegexp;
+	private RegexpDataMapper<String> datePostedRegexp;
 	private RegexpDataMapper<String[]> dataMapper;
 
 	private List<String> pagesToVisit = Lists.newLinkedList();
@@ -19,10 +20,11 @@ public class Crawler {
 	private int maxHits = Integer.MAX_VALUE;
 
 	public Crawler(String dataRegexp, String linksToFollowRegexp,
-			String startingPage) {
+			String startingPage, String postedDateRegexp) {
 		super();
 		this.dataMapper = new ToArrayRegexpMapper(dataRegexp);
 		this.linksToFollowRegexp = new ToStringRegexpMapper(linksToFollowRegexp);
+		this.datePostedRegexp = new ToStringRegexpMapper(postedDateRegexp);
 		this.pagesToVisit.add(startingPage);
 	}
 

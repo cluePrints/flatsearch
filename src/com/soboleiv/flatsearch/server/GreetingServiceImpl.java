@@ -29,9 +29,10 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		GreetingService {
 
 
-	private static final String LINKS_REGEXP = "href=\"(.{0,50}ru/offer/ad/.{0,50}/kiev/page.{0,50})\">";
-	private static final String DATA_REGEXP = "кий</td>\\W+<td   nowrap>(.{0,400})</td>.{0,800}<a href=\"(.{0,100})\" target=\"_blank\">подробнее</a>";
-	private String startPage = "http://www.svdevelopment.com/ru/offer/ad/10/kiev/page/11/";
+	public static final String LINKS_REGEXP = "href=\"(.{0,50}ru/offer/ad/.{0,50}/kiev/page.{0,50})\">";
+	public static final String DATA_REGEXP = "кий</td>\\W+<td   nowrap>(.{0,400})</td>.{0,800}<a href=\"(.{0,100})\" target=\"_blank\">подробнее</a>";
+	public static final String DATE_POSTED_REGEXP = "<td>([0-9.]+)</td>\\s+</tr>\\s+<tr id=\"item";
+	public static final String START_PAGE = "http://www.svdevelopment.com/ru/offer/ad/10/kiev/page/11/";
 	
 	private LocationSvcFacade locSvc = createLocSvc();
 	
@@ -53,7 +54,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		input = escapeHtml(input);
 		userAgent = escapeHtml(userAgent);
 		
-		Crawler c = new Crawler(DATA_REGEXP, LINKS_REGEXP, startPage);
+		Crawler c = new Crawler(DATA_REGEXP, LINKS_REGEXP, START_PAGE, DATE_POSTED_REGEXP);
 		c.setMaxHits(20);
 		c.start();
 		
