@@ -12,6 +12,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.soboleiv.flatsearch.server.crawler.ToArrayRegexpMapper;
 import com.soboleiv.flatsearch.server.crawler.UrlNormalizer;
+import com.soboleiv.flatsearch.server.util.Integers;
 import com.soboleiv.flatsearch.shared.Place;
 
 public class RowBasedTransformer implements Transformer{	
@@ -35,8 +36,8 @@ public class RowBasedTransformer implements Transformer{
 			String roomsStr = extract(data, ROOMS);
 			String costStr = extract(data, COST);
 			
-			int rooms = intFromStr(roomsStr);
-			int cost = intFromStr(costStr);
+			int rooms = Integers.fromString(roomsStr);
+			int cost = Integers.fromString(costStr);
 			
 			Place result = new Place();
 			result.setOriginalUrl(url);
@@ -55,18 +56,6 @@ public class RowBasedTransformer implements Transformer{
 			return null;
 		
 		return data[index];
-	}
-
-	private int intFromStr(String roomsStr) {
-		try {
-			if (roomsStr == null)
-				return -1;
-			
-			roomsStr = roomsStr.replaceAll("\\s+", "");
-			return Integer.parseInt(roomsStr);
-		} catch (NumberFormatException ex) {
-			return -1;
-		}
 	}
 	
 	public void setNormalizer(UrlNormalizer normalizer) {

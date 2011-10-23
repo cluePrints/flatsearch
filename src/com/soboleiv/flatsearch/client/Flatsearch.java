@@ -1,6 +1,9 @@
 package com.soboleiv.flatsearch.client;
 
  import java.util.Collection;
+import java.util.Date;
+
+import org.mortbay.log.Log;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -29,6 +32,7 @@ import com.soboleiv.flatsearch.client.admin.AdminService;
 import com.soboleiv.flatsearch.client.admin.AdminServiceAsync;
 import com.soboleiv.flatsearch.shared.AdminResponse;		
 import com.soboleiv.flatsearch.shared.FieldVerifier;
+import com.soboleiv.flatsearch.shared.Interval;
 import com.soboleiv.flatsearch.shared.Location;
 import com.soboleiv.flatsearch.shared.Place;
 import com.soboleiv.flatsearch.shared.SearchRequest;
@@ -168,6 +172,9 @@ public class Flatsearch implements EntryPoint {
 				textToServerLabel.setText(textToServer);
 				serverResponseLabel.setText("");
 				SearchRequest request = new SearchRequest();
+				Date twoMinsAgo = new Date(new Date().getTime() - 1000*60*2);
+
+				request.setFetchTime(Interval.after(twoMinsAgo));
 				greetingService.greetServer(request,
 						new AsyncCallback<Collection<Place>>() {
 							public void onFailure(Throwable caught) {

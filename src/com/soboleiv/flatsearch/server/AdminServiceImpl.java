@@ -30,7 +30,7 @@ public class AdminServiceImpl extends RemoteServiceServlet implements AdminServi
 		String pageRegexp = "<a class=\"\\w+\" href=\"(/lookforapp/\\d+.?)\">";
 		Crawler crawler2 = new Crawler(pageRegexp, startingPage);
 		Transformer transformer2 = new RDTransformer();
-		crawler2.setMaxHits(Integer.MAX_VALUE);
+		crawler2.setMaxHits(2);
 		UrlNormalizer normalizer = new BaseUrlNormalizer("http://www.realdruzi.com.ua");
 		crawler2.setNormalizer(normalizer);
 		CheckDataSourceCommand rdCommand = new CheckDataSourceCommand(crawler2, transformer2);

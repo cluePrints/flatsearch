@@ -1,13 +1,16 @@
 package com.soboleiv.flatsearch.server;
 
+import java.util.Date;
 import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.db4o.query.Predicate;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.soboleiv.flatsearch.client.SearchService;
 import com.soboleiv.flatsearch.server.db.DataStore;
+import com.soboleiv.flatsearch.shared.Interval;
 import com.soboleiv.flatsearch.shared.Place;
 import com.soboleiv.flatsearch.shared.SearchRequest;
 
@@ -20,7 +23,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements
 	private Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);	
 	private DataStore<Place> store = DataStore.persistent();
 	
-	public Collection<Place> greetServer(SearchRequest input) throws IllegalArgumentException {
+	public Collection<Place> greetServer(final SearchRequest input) throws IllegalArgumentException {
 		/*String serverInfo = getServletContext().getServerInfo();
 		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
 
@@ -28,9 +31,34 @@ public class SearchServiceImpl extends RemoteServiceServlet implements
 		input = escapeHtml(input);
 		userAgent = escapeHtml(userAgent);*/
 		log.debug("Called with {}", input);
-		Collection<Place> results = store.getAllByExample(new Place());
+		Collection<Place> results = store.getBy(new Predicate<Place>() {			
+			@Override
+			public boolean match(Place arg0) {
+				long fetchTime = toInt(arg0.getWasFetchedAt());
+				Interval<Date> fetchConstraint = input.getFetchTime();
+				if (!fetchConstraint.minOpen()) {
+					if (toInt(fetchConstraint.getMin()) > fetchTime) {
+						return false;
+					}
+				}
+				if (!fetchConstraint.maxOpen()) {
+					if (toInt(fetchConstraint.getMax()) < fetchTime) {
+						return false;
+					}
+				}
+				return true;
+			}
+		});
 		log.debug("Returning {} results", results.size());
 		return results;
+	}
+	
+	private long toInt(Date date) {
+		if (date == null) {
+			return -1;
+		} else {
+			return date.getTime();
+		}
 	}
 	
 	/**

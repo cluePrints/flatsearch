@@ -5,17 +5,18 @@ import com.soboleiv.flatsearch.shared.Place;
 public class PlaceFormatter {
 	public String format(Place place) {
 		String result = "<table>";
-		result = addRow(result, "Address", place.getAddress());
-		result = addRow(result, "Price", place.getPriceUsd());
-		result = addRow(result, "Rooms", place.getRoomsNumber());
-		result = addRow(result, "Posted on", place.getPostingDate());
-		result = addRow(result, "Original", getUrl(place));
+		result = addRow(result, "Адресс", place.getAddress());
+		result = addRow(result, "Цена, $", place.getPriceUsd());
+		result = addRow(result, "Комнат", place.getRoomsNumber());
+		result = addRow(result, "Давность", place.getPostingDate());
+		result = addRow(result, "Подробности", asHtmlReference(place.getOriginalUrl()));
+		result = addRow(result, "Найдено", asHtmlReference(place.getWasFoundAt()));
 		result += "</table>";
 		return result;
 	}
 
-	private String getUrl(Place place) {
-		return "<a href=\""+place.getOriginalUrl()+"\" target=\"_blank\">more</a>";
+	private String asHtmlReference(String url) {
+		return "<a href=\""+url+"\" target=\"_blank\">здесь</a>";
 	}
 	
 	private String addRow(String result, String caption, Object val) {

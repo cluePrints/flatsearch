@@ -8,6 +8,7 @@ import com.db4o.EmbeddedObjectContainer;
 import com.db4o.ObjectSet;
 import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.io.MemoryStorage;
+import com.db4o.query.Predicate;
 import com.google.common.collect.Lists;
 
 public class DataStore<V> {
@@ -21,8 +22,17 @@ public class DataStore<V> {
 		return (V) queryResults.get(0);
 	}
 	
+	public Collection<V> getBy(Predicate<V> arg0) {
+		ObjectSet<V> res = db.query(arg0);
+		return serializationSafe(res);
+	}
+	
 	public Collection<V> getAllByExample(V ex){
 	    ObjectSet<V> results = db.queryByExample(ex);
+		return serializationSafe(results);
+	}
+
+	private Collection<V> serializationSafe(Collection<V> results) {
 		List<V> simpleResults = Lists.newLinkedList();
 		simpleResults.addAll(results);
 		return simpleResults;

@@ -1,5 +1,6 @@
 package com.soboleiv.flatsearch.server.crawler;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -78,6 +79,8 @@ public class CheckDataSourceCommand {
 					return;
 				
 				place.setCoordinates(location);
+				place.setWasFoundAt(item.getUrl());
+				place.setWasFetchedAt(new Date());
 				places.add(place);
 			}
 		} catch (Exception ex) {

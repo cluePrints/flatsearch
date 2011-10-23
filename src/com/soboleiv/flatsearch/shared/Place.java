@@ -1,6 +1,7 @@
 package com.soboleiv.flatsearch.shared;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 public class Place implements Serializable{
@@ -12,6 +13,9 @@ public class Place implements Serializable{
 	private String postingDate;
 	private int priceUsd;
 	private int roomsNumber;
+	private String wasFoundAt;
+	private Date wasFetchedAt;
+	
 	public String getOriginalUrl() {
 		return originalUrl;
 	}
@@ -47,5 +51,17 @@ public class Place implements Serializable{
 	}
 	public void setPriceUsd(int price) {
 		this.priceUsd = price;
+	}
+	public void setWasFoundAt(String wasFoundAt) {
+		this.wasFoundAt = wasFoundAt;
+	}
+	public String getWasFoundAt() {
+		return wasFoundAt;
+	}
+	public void setWasFetchedAt(Date wasFetchedAt) {
+		this.wasFetchedAt = wasFetchedAt;
+	}
+	public Date getWasFetchedAt() {
+		return wasFetchedAt;
 	}
 }
