@@ -6,3 +6,5 @@ war/flatsearch/
 war/flatsearch/*
 .gwt/.gwt-log 
 war/WEB-INF/deploy/flatsearch/rpcPolicyManifest/manifests/*.txt 
+.gwt/ 
+war/WEB-INF/deploy 
