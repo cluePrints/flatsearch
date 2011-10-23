@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.soboleiv.flatsearch.server.GreetingServiceImpl;
+import com.soboleiv.flatsearch.server.SearchServiceImpl;
 import com.soboleiv.flatsearch.server.db.DataStore;
 
 public class CachedUrlReader extends UrlReader {

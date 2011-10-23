@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.soboleiv.flatsearch.shared.FieldVerifier;
 import com.soboleiv.flatsearch.shared.Location;
 import com.soboleiv.flatsearch.shared.Place;
+import com.soboleiv.flatsearch.shared.SearchRequest;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -75,8 +76,8 @@ public class Flatsearch implements EntryPoint {
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
 	 */
-	private final GreetingServiceAsync greetingService = GWT
-			.create(GreetingService.class);
+	private final SearchServiceAsync greetingService = GWT
+			.create(SearchService.class);
 
 	/**
 	 * This is the entry point method.
@@ -163,7 +164,8 @@ public class Flatsearch implements EntryPoint {
 				// sendButton.setEnabled(false);
 				textToServerLabel.setText(textToServer);
 				serverResponseLabel.setText("");
-				greetingService.greetServer(textToServer,
+				SearchRequest request = new SearchRequest();
+				greetingService.greetServer(request,
 						new AsyncCallback<Collection<Place>>() {
 							public void onFailure(Throwable caught) {
 								// Show the RPC error message to the user

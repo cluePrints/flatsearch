@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.soboleiv.flatsearch.server.GreetingServiceImpl;
+import com.soboleiv.flatsearch.server.SearchServiceImpl;
 
 public class ToArrayRegexpMapper extends RegexpDataMapper<String[]>{
 	private Logger log = LoggerFactory.getLogger(ToArrayRegexpMapper.class);

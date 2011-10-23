@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.soboleiv.flatsearch.client.GreetingService;
+import com.soboleiv.flatsearch.client.SearchService;
 import com.soboleiv.flatsearch.server.crawler.CachedUrlReader;
 import com.soboleiv.flatsearch.server.crawler.CachedUrlReader.Interaction;
 import com.soboleiv.flatsearch.server.crawler.CrawledResult;
@@ -21,13 +21,14 @@ import com.soboleiv.flatsearch.server.transorm.SDTransformer;
 import com.soboleiv.flatsearch.shared.FieldVerifier;
 import com.soboleiv.flatsearch.shared.Location;
 import com.soboleiv.flatsearch.shared.Place;
+import com.soboleiv.flatsearch.shared.SearchRequest;
 
 /**
  * The server side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
-public class GreetingServiceImpl extends RemoteServiceServlet implements
-		GreetingService {
+public class SearchServiceImpl extends RemoteServiceServlet implements
+		SearchService {
 
 	public static final String LINKS_REGEXP = "href=\"(.{0,50}ru/offer/ad/.{0,50}/kiev/page.{0,50})\">";
 	public static final String START_PAGE = "http://www.svdevelopment.com/ru/offer/ad/10/kiev/page/11/";
@@ -35,23 +36,15 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 	private LocationSvcFacade locSvc = createLocSvc();
 	private SDTransformer transformer = new SDTransformer();
 	
-	private Logger log = LoggerFactory.getLogger(GreetingServiceImpl.class);
+	private Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
 	
-	public Collection<Place> greetServer(String input) throws IllegalArgumentException {
-		// Verify that the input is valid. 
-		if (!FieldVerifier.isValidName(input)) {
-			// If the input is not valid, throw an IllegalArgumentException back to
-			// the client.
-			throw new IllegalArgumentException(
-					"Name must be at least 4 characters long");
-		}
-
-		String serverInfo = getServletContext().getServerInfo();
+	public Collection<Place> greetServer(SearchRequest input) throws IllegalArgumentException {
+		/*String serverInfo = getServletContext().getServerInfo();
 		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
 
 		// Escape data from the client to avoid cross-site script vulnerabilities.
 		input = escapeHtml(input);
-		userAgent = escapeHtml(userAgent);
+		userAgent = escapeHtml(userAgent);*/
 		
 		Crawler c = new Crawler(LINKS_REGEXP, START_PAGE);
 		c.setMaxHits(2);
