@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.soboleiv.flatsearch.client.admin.AdminService;
 import com.soboleiv.flatsearch.client.admin.AdminServiceAsync;
+import com.soboleiv.flatsearch.client.gui.Notification;
 import com.soboleiv.flatsearch.shared.AdminResponse;		
 import com.soboleiv.flatsearch.shared.FieldVerifier;
 import com.soboleiv.flatsearch.shared.Interval;
@@ -86,6 +87,8 @@ public class Flatsearch implements EntryPoint {
 	private final SearchServiceAsync greetingService = GWT.create(SearchService.class);
 	private final AdminServiceAsync adminService = GWT.create(AdminService.class);
 
+	final Notification notification = new Notification();
+
 	/**
 	 * This is the entry point method.
 	 */
@@ -94,7 +97,7 @@ public class Flatsearch implements EntryPoint {
 		final TextBox nameField = new TextBox();
 		nameField.setText("GWT User");
 		final Label errorLabel = new Label();
-
+		
 		// We can add style names to widgets
 		searchButton.addStyleName("sendButton");
 
@@ -109,32 +112,6 @@ public class Flatsearch implements EntryPoint {
 		nameField.selectAll();
 
 		// Create the popup dialog box
-		final DialogBox dialogBox = new DialogBox();
-		dialogBox.setText("Remote Procedure Call");
-		dialogBox.setAnimationEnabled(true);
-		final Button closeButton = new Button("Close");
-		// We can set the id of a widget by accessing its Element
-		closeButton.getElement().setId("closeButton");
-		final Label textToServerLabel = new Label();
-		final HTML serverResponseLabel = new HTML();
-		VerticalPanel dialogVPanel = new VerticalPanel();
-		dialogVPanel.addStyleName("dialogVPanel");
-		dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
-		dialogVPanel.add(textToServerLabel);
-		dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-		dialogVPanel.add(serverResponseLabel);
-		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-		dialogVPanel.add(closeButton);
-		dialogBox.setWidget(dialogVPanel);
-
-		// Add a handler to close the DialogBox
-		closeButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				dialogBox.hide();
-				searchButton.setEnabled(true);
-				searchButton.setFocus(true);
-			}
-		});
 
 		// Create a handler for the sendButton and nameField
 		class MyHandler implements ClickHandler, KeyUpHandler {
@@ -169,18 +146,13 @@ public class Flatsearch implements EntryPoint {
 
 				// Then, we send the input to the server.
 				// sendButton.setEnabled(false);
-				textToServerLabel.setText(textToServer);
-				serverResponseLabel.setText("");
 				SearchRequest request = new SearchRequest();
 				Date twoMinsAgo = new Date(new Date().getTime() - 1000*60*2);
-
 				request.setFetchTime(Interval.after(twoMinsAgo));
 				greetingService.greetServer(request,
 						new AsyncCallback<Collection<Place>>() {
 							public void onFailure(Throwable caught) {
-								// Show the RPC error message to the user
-								handleFailure(dialogBox, closeButton,
-										serverResponseLabel);
+								notification.handleFailure(caught);
 							}
 
 							public void onSuccess(Collection<Place> result) {
@@ -222,15 +194,6 @@ public class Flatsearch implements EntryPoint {
 									map.setCenter(markerPos);
 									map.setZoomLevel(12);
 								}
-
-								/*
-								 * dialogBox.setText("Remote Procedure Call");
-								 * serverResponseLabel
-								 * .removeStyleName("serverResponseLabelError");
-								 * serverResponseLabel.setHTML(result);
-								 * dialogBox.center();
-								 * closeButton.setFocus(true);
-								 */
 							}
 						});
 			}
@@ -247,31 +210,14 @@ public class Flatsearch implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				adminService.checkDataSources(new AsyncCallback<AdminResponse>() {
 					public void onFailure(Throwable caught) {
-						handleFailure(dialogBox, closeButton, serverResponseLabel);						
+						notification.handleFailure(caught);						
 					}
 					
 					public void onSuccess(AdminResponse result) {
-						dialogBox.setText("Coolio");
-						serverResponseLabel.setHTML("Everything is cool");
-						dialogBox.center();
-						closeButton.setFocus(true);
+						notification.show("Coolio", "Everything is cool", "");
 					};
 				});
 			}
 		});
 	}
-	
-	private void handleFailure(
-			final DialogBox dialogBox,
-			final Button closeButton,
-			final HTML serverResponseLabel) {
-		dialogBox
-				.setText("Remote Procedure Call - Failure");
-		serverResponseLabel
-				.addStyleName("serverResponseLabelError");
-		serverResponseLabel.setHTML(SERVER_ERROR);
-		dialogBox.center();
-		closeButton.setFocus(true);
-	}
-
 }
