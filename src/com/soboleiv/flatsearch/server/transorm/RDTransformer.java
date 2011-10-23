@@ -6,6 +6,8 @@ import static com.soboleiv.flatsearch.server.transorm.Field.DATE;
 import static com.soboleiv.flatsearch.server.transorm.Field.ROOMS;
 import static com.soboleiv.flatsearch.server.transorm.Field.URL;
 
+import com.soboleiv.flatsearch.server.crawler.BaseUrlNormalizer;
+
 public class RDTransformer extends RowBasedTransformer{
 	public static final String ROOMS_REGEXP = "Количество комнат:</td><td class=\"ivnFullDataValue_td\">(\\d+)</td></tr>";
 	public static final String COST_REGEXP = "Цена</span>:</td><td class=\"\\w+\"><span style=\".{0,100}\">(.{0,8})у.е.</span></td></tr>";
@@ -20,6 +22,7 @@ public class RDTransformer extends RowBasedTransformer{
 											+ DATE_POSTED_REGEXP*/;
 	public RDTransformer() {
 		super(DATA_REGEXP, ADDRESS,ROOMS,COST,URL,DATE);
+		setNormalizer(new BaseUrlNormalizer("http://www.realdruzi.com.ua"));
 	}
 	
 	private static String skip(int maxSkip) {

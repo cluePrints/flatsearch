@@ -10,14 +10,16 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 
 import org.apache.http.util.ByteArrayBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
 public class UrlReader {
-	public static final Charset CHARSET = Charset.forName("Windows-1251");
+	private static Logger log = LoggerFactory.getLogger(Crawler.class);
 
 	private static boolean isDebugEnabled = false;
-	
+
 	public String readUrlContent(String urlStr) {
 		try {
 			URL url = new URL(urlStr);
@@ -29,20 +31,31 @@ public class UrlReader {
 			wr.close();
 			InputStream stream = conn.getInputStream();
 
-			String content = toString(stream);
+			Charset charset = detectCharset(conn);
+			String content = toString(stream, charset);
 
-			debugLogFetchedFile(urlStr, content);
 			return content;
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
 	}
 
+	private static Charset detectCharset(URLConnection conn) {
+		String contentTypeStr = conn.getHeaderField("Content-Type");
+		String charsetToken = "charset=";
+		int startingPos = contentTypeStr.indexOf(charsetToken)
+				+ charsetToken.length();
+		String encoding = contentTypeStr.substring(startingPos);
+		log.debug("Detected character set: " + encoding);
+		Charset charset = Charset.forName(encoding);
+		return charset;
+	}
+
 	public static UrlReader cacheForDays(int days) {
 		return new CachedUrlReader(new UrlReader());
 	}
-	
-	private String toString(InputStream stream) throws IOException {
+
+	private String toString(InputStream stream, Charset charset) throws IOException {
 		BufferedInputStream bis = new BufferedInputStream(stream);
 
 		ByteArrayBuffer baf = new ByteArrayBuffer(5000);
@@ -50,16 +63,6 @@ public class UrlReader {
 		while ((current = bis.read()) != -1) {
 			baf.append((byte) current);
 		}
-		return new String(baf.toByteArray(), CHARSET);
+		return new String(baf.toByteArray(), charset);
 	}
-	
-	private void debugLogFetchedFile(String url, String res)
-			throws IOException {
-		if (isDebugEnabled) {
-			String name = "1.html";
-			System.out.println("Dumping to log: " + name);
-			Files.write(res, new File(name), CHARSET);
-		}
-	}
-
 }

@@ -1,25 +1,13 @@
 package com.soboleiv.flatsearch.server;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.soboleiv.flatsearch.client.SearchService;
-import com.soboleiv.flatsearch.server.crawler.CachedUrlReader;
-import com.soboleiv.flatsearch.server.crawler.CachedUrlReader.Interaction;
-import com.soboleiv.flatsearch.server.crawler.CrawledResult;
-import com.soboleiv.flatsearch.server.crawler.Crawler;
-import com.soboleiv.flatsearch.server.crawler.UrlReader;
 import com.soboleiv.flatsearch.server.db.DataStore;
-import com.soboleiv.flatsearch.server.geo.LocationSvcFacade;
-import com.soboleiv.flatsearch.server.geo.LocationSvcReader;
-import com.soboleiv.flatsearch.server.transorm.SDTransformer;
-import com.soboleiv.flatsearch.shared.FieldVerifier;
-import com.soboleiv.flatsearch.shared.Location;
 import com.soboleiv.flatsearch.shared.Place;
 import com.soboleiv.flatsearch.shared.SearchRequest;
 

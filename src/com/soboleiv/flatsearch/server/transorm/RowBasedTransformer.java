@@ -11,11 +11,13 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.soboleiv.flatsearch.server.crawler.ToArrayRegexpMapper;
+import com.soboleiv.flatsearch.server.crawler.UrlNormalizer;
 import com.soboleiv.flatsearch.shared.Place;
 
 public class RowBasedTransformer implements Transformer{	
 	protected List<Field> order;
 	private ToArrayRegexpMapper dataMapper;
+	private UrlNormalizer normalizer = UrlNormalizer.NONE;
 	
 	public RowBasedTransformer(String regexp, Field... order) {
 		this.dataMapper = new ToArrayRegexpMapper(regexp);
@@ -28,7 +30,7 @@ public class RowBasedTransformer implements Transformer{
 		List<Place> results = Lists.newLinkedList();
 		for (String[] data : datas) {
 			String address = extract(data, ADDRESS);
-			String url = extract(data, URL);
+			String url = normalizer.normalize(extract(data, URL));
 			String date = extract(data, DATE);
 			String roomsStr = extract(data, ROOMS);
 			String costStr = extract(data, COST);
@@ -65,5 +67,9 @@ public class RowBasedTransformer implements Transformer{
 		} catch (NumberFormatException ex) {
 			return -1;
 		}
+	}
+	
+	public void setNormalizer(UrlNormalizer normalizer) {
+		this.normalizer = normalizer;
 	}
 }

@@ -14,6 +14,7 @@ public class Crawler {
 	private List<CrawledResult> data = Lists.newLinkedList();
 	
 	private UrlReader urlReader = new UrlReader();
+	private UrlNormalizer normalizer = UrlNormalizer.NONE;
 	
 	private int maxHits = Integer.MAX_VALUE;
 
@@ -55,7 +56,9 @@ public class Crawler {
 			String content = urlReader.readUrlContent(url);
 
 			List<String> linksToFollow = linksToFollowRegexp.parseData(content);
-			pagesToVisit.addAll(linksToFollow);
+			for (String link : linksToFollow) {
+				pagesToVisit.add(normalizer.normalize(link));
+			}
 			System.out.println("Added " + linksToFollow.size() + " links to follow.");
 
 			data.add(new CrawledResult(content, url));
@@ -66,5 +69,9 @@ public class Crawler {
 		}
 
 		pagesToVisit.remove(url);
+	}
+	
+	public void setNormalizer(UrlNormalizer normalizer) {
+		this.normalizer = normalizer;
 	}
 }

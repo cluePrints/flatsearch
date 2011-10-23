@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.soboleiv.flatsearch.client.admin.AdminService;
 import com.soboleiv.flatsearch.client.admin.AdminServiceAsync;
-import com.soboleiv.flatsearch.shared.AdminResponse;
+import com.soboleiv.flatsearch.shared.AdminResponse;		
 import com.soboleiv.flatsearch.shared.FieldVerifier;
 import com.soboleiv.flatsearch.shared.Location;
 import com.soboleiv.flatsearch.shared.Place;
