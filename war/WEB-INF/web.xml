@@ -11,9 +11,20 @@
     <servlet-class>com.soboleiv.flatsearch.server.SearchServiceImpl</servlet-class>
   </servlet>
   
+  <servlet>
+    <servlet-name>adminServlet</servlet-name>
+    <servlet-class>com.soboleiv.flatsearch.server.AdminServiceImpl</servlet-class>
+  </servlet>
+  
+  
   <servlet-mapping>
     <servlet-name>searchServlet</servlet-name>
     <url-pattern>/flatsearch/search</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>adminServlet</servlet-name>
+    <url-pattern>/flatsearch/admin</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

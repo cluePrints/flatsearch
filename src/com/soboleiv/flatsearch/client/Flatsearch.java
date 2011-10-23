@@ -25,6 +25,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.soboleiv.flatsearch.client.admin.AdminService;
+import com.soboleiv.flatsearch.client.admin.AdminServiceAsync;
+import com.soboleiv.flatsearch.shared.AdminResponse;
 import com.soboleiv.flatsearch.shared.FieldVerifier;
 import com.soboleiv.flatsearch.shared.Location;
 import com.soboleiv.flatsearch.shared.Place;
@@ -76,25 +79,25 @@ public class Flatsearch implements EntryPoint {
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
 	 */
-	private final SearchServiceAsync greetingService = GWT
-			.create(SearchService.class);
+	private final SearchServiceAsync greetingService = GWT.create(SearchService.class);
+	private final AdminServiceAsync adminService = GWT.create(AdminService.class);
 
 	/**
 	 * This is the entry point method.
 	 */
-	private void hahaha() {
-		final Button sendButton = new Button("Send");
+	private void hahaha() {		
+		final Button searchButton = new Button("Search");
 		final TextBox nameField = new TextBox();
 		nameField.setText("GWT User");
 		final Label errorLabel = new Label();
 
 		// We can add style names to widgets
-		sendButton.addStyleName("sendButton");
+		searchButton.addStyleName("sendButton");
 
 		// Add the nameField and sendButton to the RootPanel
 		// Use RootPanel.get() to get the entire body element
 		RootPanel.get("nameFieldContainer").add(nameField);
-		RootPanel.get("sendButtonContainer").add(sendButton);
+		RootPanel.get("sendButtonContainer").add(searchButton);
 		RootPanel.get("errorLabelContainer").add(errorLabel);
 
 		// Focus the cursor on the name field when the app loads
@@ -124,8 +127,8 @@ public class Flatsearch implements EntryPoint {
 		closeButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				dialogBox.hide();
-				sendButton.setEnabled(true);
-				sendButton.setFocus(true);
+				searchButton.setEnabled(true);
+				searchButton.setFocus(true);
 			}
 		});
 
@@ -169,13 +172,8 @@ public class Flatsearch implements EntryPoint {
 						new AsyncCallback<Collection<Place>>() {
 							public void onFailure(Throwable caught) {
 								// Show the RPC error message to the user
-								dialogBox
-										.setText("Remote Procedure Call - Failure");
-								serverResponseLabel
-										.addStyleName("serverResponseLabelError");
-								serverResponseLabel.setHTML(SERVER_ERROR);
-								dialogBox.center();
-								closeButton.setFocus(true);
+								handleFailure(dialogBox, closeButton,
+										serverResponseLabel);
 							}
 
 							public void onSuccess(Collection<Place> result) {
@@ -233,7 +231,40 @@ public class Flatsearch implements EntryPoint {
 
 		// Add a handler to send the name to the server
 		MyHandler handler = new MyHandler();
-		sendButton.addClickHandler(handler);
+		searchButton.addClickHandler(handler);
 		nameField.addKeyUpHandler(handler);
+		
+		final Button startFetching = new Button("Fetch");
+		RootPanel.get("startFetchingContainer").add(startFetching);
+		startFetching.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				adminService.checkDataSources(new AsyncCallback<AdminResponse>() {
+					public void onFailure(Throwable caught) {
+						handleFailure(dialogBox, closeButton, serverResponseLabel);						
+					}
+					
+					public void onSuccess(AdminResponse result) {
+						dialogBox.setText("Coolio");
+						serverResponseLabel.setHTML("Everything is cool");
+						dialogBox.center();
+						closeButton.setFocus(true);
+					};
+				});
+			}
+		});
 	}
+	
+	private void handleFailure(
+			final DialogBox dialogBox,
+			final Button closeButton,
+			final HTML serverResponseLabel) {
+		dialogBox
+				.setText("Remote Procedure Call - Failure");
+		serverResponseLabel
+				.addStyleName("serverResponseLabelError");
+		serverResponseLabel.setHTML(SERVER_ERROR);
+		dialogBox.center();
+		closeButton.setFocus(true);
+	}
+
 }

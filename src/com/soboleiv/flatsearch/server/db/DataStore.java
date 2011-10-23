@@ -1,10 +1,14 @@
 package com.soboleiv.flatsearch.server.db;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.db4o.Db4oEmbedded;
 import com.db4o.EmbeddedObjectContainer;
 import com.db4o.ObjectSet;
 import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.io.MemoryStorage;
+import com.google.common.collect.Lists;
 
 public class DataStore<V> {
 	private EmbeddedObjectContainer db;
@@ -13,7 +17,15 @@ public class DataStore<V> {
 	    ObjectSet<Object> queryResults = db.queryByExample(ex);
 	    if (queryResults.size() == 0)
 	    	return null;
+	    
 		return (V) queryResults.get(0);
+	}
+	
+	public Collection<V> getAllByExample(V ex){
+	    ObjectSet<V> results = db.queryByExample(ex);
+		List<V> simpleResults = Lists.newLinkedList();
+		simpleResults.addAll(results);
+		return simpleResults;
 	}
 	
 	public void save(V val) {		
@@ -39,9 +51,15 @@ public class DataStore<V> {
 		return res;
 	}
 	
-	public static <V> DataStore<V> persistent() {
+	// TODO: it's singleton to save some dev time on DI wiring
+	private static DataStore store;
+	public synchronized static <V> DataStore<V> persistent() {
+		if (store != null) {
+			return store;
+		}
 		DataStore<V> res = new DataStore<V>();
 		res.db = open(false);
+		store = res;
 		return res;
 	}
 

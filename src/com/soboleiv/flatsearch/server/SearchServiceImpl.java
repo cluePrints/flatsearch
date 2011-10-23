@@ -29,14 +29,8 @@ import com.soboleiv.flatsearch.shared.SearchRequest;
 @SuppressWarnings("serial")
 public class SearchServiceImpl extends RemoteServiceServlet implements
 		SearchService {
-
-	public static final String LINKS_REGEXP = "href=\"(.{0,50}ru/offer/ad/.{0,50}/kiev/page.{0,50})\">";
-	public static final String START_PAGE = "http://www.svdevelopment.com/ru/offer/ad/10/kiev/page/11/";
-	
-	private LocationSvcFacade locSvc = createLocSvc();
-	private SDTransformer transformer = new SDTransformer();
-	
-	private Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
+	private Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);	
+	private DataStore<Place> store = DataStore.persistent();
 	
 	public Collection<Place> greetServer(SearchRequest input) throws IllegalArgumentException {
 		/*String serverInfo = getServletContext().getServerInfo();
@@ -45,58 +39,12 @@ public class SearchServiceImpl extends RemoteServiceServlet implements
 		// Escape data from the client to avoid cross-site script vulnerabilities.
 		input = escapeHtml(input);
 		userAgent = escapeHtml(userAgent);*/
-		
-		Crawler c = new Crawler(LINKS_REGEXP, START_PAGE);
-		c.setMaxHits(2);
-		c.start();
-		
-		List<CrawledResult> data = c.getData();
-		List<Place> places = lookup(data);
-
-		return places;
+		log.debug("Called with {}", input);
+		Collection<Place> results = store.getAllByExample(new Place());
+		log.debug("Returning {} results", results.size());
+		return results;
 	}
-
-	private LocationSvcFacade createLocSvc() {
-		LocationSvcFacade locSvc = new LocationSvcFacade();
-		CachedUrlReader urlReader = new CachedUrlReader(new UrlReader());
-		DataStore<Interaction> db = DataStore.persistent();
-		urlReader.setStore(db);
-		LocationSvcReader reader = new LocationSvcReader();
-		reader.setUrlReader(urlReader);
-		locSvc.setReader(reader);
-		return locSvc;
-	}
-
-	public List<Place> lookup(List<CrawledResult> data) {
-		List<Place> places = Lists.newLinkedList();
-		for (CrawledResult item : data){
-			int idx = data.indexOf(item);
-			log.info("{}",idx);
-			
-			convertAndAddIfValid(item, places);
-		}
-		return places;
-	}
-
-	private void convertAndAddIfValid(CrawledResult item, List<Place> places) {
-		try {
-			String html = item.getData();
-			List<Place> results = transformer.parse(html);
-			for (Place place : results) {
-				String address = place.getAddress();
-				Location location = locSvc.get(address);
-				
-				if (location == Location.INVALID)
-					return;
-				
-				place.setCoordinates(location);
-				places.add(place);
-			}
-		} catch (Exception ex) {
-			log.error("We've got a problem", ex);
-		}
-	}
-
+	
 	/**
 	 * Escape an html string. Escaping data received from the client helps to
 	 * prevent cross-site script vulnerabilities.
