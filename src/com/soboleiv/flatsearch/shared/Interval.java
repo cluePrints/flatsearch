@@ -20,6 +20,9 @@ public class Interval<T extends Comparable<T>> implements Serializable {
 	public static <T extends Comparable<T>> Interval<T> after(T min) {
 		return Interval.between(min, null);
 	}
+	public static <T extends Comparable<T>> Interval<T> before(T max) {
+		return Interval.between(null, max);
+	}
 	
 	public T getMin() {
 		return min;
