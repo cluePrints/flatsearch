@@ -18,6 +18,26 @@ public class PredicatesTest {
 	}
 	
 	@Test
+	public void shouldMatchNullValueOnlyIfBothBoundariesAreOpen() {
+		Place place = new Place();
+		place.setWasFetchedAt(null);
+		Date twoMinsAgo = new Date(System.currentTimeMillis() - 1000 * 60 *2);
+		Date twoMinsFwd = new Date(System.currentTimeMillis() + 1000 * 60 *2);
+
+		boolean res = Predicates.fetchTime(Interval.between(twoMinsAgo, twoMinsFwd)).appliesTo(place);
+		Assert.assertFalse(res);
+		
+		res = Predicates.fetchTime(Interval.between(null, twoMinsFwd)).appliesTo(place);
+		Assert.assertFalse(res);
+		
+		res = Predicates.fetchTime(Interval.between(twoMinsAgo, null)).appliesTo(place);
+		Assert.assertFalse(res);
+
+		res = Predicates.fetchTime(Interval.between((Date) null, null)).appliesTo(place);
+		Assert.assertTrue(res);
+	}
+	
+	@Test
 	public void shouldMatchRightOpenConstraint() {
 		Place place = new Place();
 		place.setWasFetchedAt(new Date());

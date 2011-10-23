@@ -29,14 +29,22 @@ public class Predicates {
 		return new Predicate<Place>() {
 			@Override
 			public boolean match(Place arg0) {
-				T fetchTime = field.apply(arg0);
+				T val = field.apply(arg0);
+				if (val == null) {
+					if (interval.minOpen() && interval.maxOpen()) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+					
 				if (!interval.minOpen()) {
-					if (compare(interval.getMin(), fetchTime) == 1) {
+					if (compare(interval.getMin(), val) == 1) {
 						return false;
 					}
 				}
 				if (!interval.maxOpen()) {
-					if (compare(interval.getMax(), fetchTime) == -1) {
+					if (compare(interval.getMax(), val) == -1) {
 						return false;
 					}
 				}
