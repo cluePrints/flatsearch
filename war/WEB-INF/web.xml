@@ -7,13 +7,13 @@
 
   <!-- Servlets -->
   <servlet>
-    <servlet-name>greetServlet</servlet-name>
+    <servlet-name>searchServlet</servlet-name>
     <servlet-class>com.soboleiv.flatsearch.server.SearchServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/flatsearch/greet</url-pattern>
+    <servlet-name>searchServlet</servlet-name>
+    <url-pattern>/flatsearch/search</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

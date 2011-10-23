@@ -10,7 +10,7 @@ import com.soboleiv.flatsearch.shared.SearchRequest;
 /**
  * The client side stub for the RPC service.
  */
-@RemoteServiceRelativePath("greet")
+@RemoteServiceRelativePath("search")
 public interface SearchService extends RemoteService {
 	Collection<Place> greetServer(SearchRequest request) throws IllegalArgumentException;
 }
