@@ -29,10 +29,10 @@ public class SVDTransformerTest {
 		}
 		Place first = resultsByAddress.get("Комарова пр. , 9-А");
 		Assert.assertEquals(1, first.getRoomsNumber());
-		Assert.assertEquals("22.10.2011", result.get(0).getPostingDate());
-		Assert.assertEquals("http://www.svdevelopment.com/ru/offer/ad/10/kiev/3248039/", result.get(0).getOriginalUrl());
-		Assert.assertEquals("Комарова пр. , 9-А", result.get(0).getAddress());
-		Assert.assertEquals(375, result.get(0).getPriceUsd());
+		Assert.assertEquals("22.10.2011", first.getPostingDate());
+		Assert.assertEquals("http://www.svdevelopment.com/ru/offer/ad/10/kiev/3248039/", first.getOriginalUrl());
+		Assert.assertEquals("Комарова пр. , 9-А", first.getAddress());
+		Assert.assertEquals(375, first.getPriceUsd());
 	}
 
 	private String loadData() throws IOException {
