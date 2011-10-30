@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.soboleiv.flatsearch.server.util.InputsSanitizer;
+
 abstract class RegexpDataMapper<T> {
 	protected String dataRegexp;	
 
@@ -21,12 +23,36 @@ abstract class RegexpDataMapper<T> {
 					"Group count should be more then 0 - they point to data to be captured.");
 
 		List<T> results = new LinkedList<T>();
+		SanitizingMatcher secure = new SanitizingMatcher(matcher);
 		while (matcher.find()) {
-			T result = mapMatch(matcher);
+			T result = mapMatch(secure);
 			results.add(result);
 		}
 		return results;
 	}
 	
-	protected abstract T mapMatch(Matcher matcher);
+	protected abstract T mapMatch(SanitizingMatcher matcher);
+}
+
+class SanitizingMatcher {
+	private InputsSanitizer checker = new InputsSanitizer();
+	private Matcher matcher;
+	
+	public SanitizingMatcher(Matcher matcher) {
+		super();
+		this.matcher = matcher;
+	}
+
+	public String group(int num) {
+		String val = matcher.group(num);		
+		return checker.sanitize(val);
+	}
+	
+	public int groupCount() {
+		return matcher.groupCount();
+	}
+	
+	public boolean find() {
+		return matcher.find();
+	}
 }

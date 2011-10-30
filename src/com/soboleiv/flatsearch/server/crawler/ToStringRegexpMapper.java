@@ -1,14 +1,12 @@
 package com.soboleiv.flatsearch.server.crawler;
 
-import java.util.regex.Matcher;
 
 public class ToStringRegexpMapper extends RegexpDataMapper<String>{
-	
 	public ToStringRegexpMapper(String dataRegexp) {
 		this.dataRegexp = dataRegexp;
 	}
 	
-	protected String mapMatch(Matcher matcher) {
+	protected String mapMatch(SanitizingMatcher matcher) {
 		return matcher.group(1);
 	}
 }

@@ -1,11 +1,7 @@
 package com.soboleiv.flatsearch.server.crawler;
 
-import java.util.regex.Matcher;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.soboleiv.flatsearch.server.SearchServiceImpl;
 
 public class ToArrayRegexpMapper extends RegexpDataMapper<String[]>{
 	private Logger log = LoggerFactory.getLogger(ToArrayRegexpMapper.class);
@@ -15,7 +11,7 @@ public class ToArrayRegexpMapper extends RegexpDataMapper<String[]>{
 		log.debug("Created with regexp: "+dataRegexp);
 	}
 	
-	protected String[] mapMatch(Matcher matcher) {
+	protected String[] mapMatch(SanitizingMatcher matcher) {
 		String[] result = new String[matcher.groupCount()];
 		for (int i = 0; i < matcher.groupCount() ; i++) {
 			result[i] = matcher.group(i + 1);
