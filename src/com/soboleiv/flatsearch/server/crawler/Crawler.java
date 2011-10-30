@@ -28,11 +28,7 @@ public class Crawler {
 	private int maxHits = Integer.MAX_VALUE;
 	String startingPage;
 	
-	Predicate<String> stopCondition = new Predicate<String>() {
-		public boolean apply(String justVisitedPage) {
-			return visited.size() >= maxHits;
-		}
-	};
+	Predicate<String> stopCondition;
 
 	public Crawler(String linksToFollowRegexp,
 			String startingPage) {
@@ -84,7 +80,7 @@ public class Crawler {
 			log.debug("Processing: {}", url);
 			String content = urlReader.readUrlContent(url);
 
-			extractLinksToFollow(content);
+			extractLinksToFollow(url, content);
 
 			data.add(new CrawledResult(content, url));
 
@@ -92,7 +88,10 @@ public class Crawler {
 		}
 	}
 
-	void extractLinksToFollow(String content) {
+	void extractLinksToFollow(String url, String content) {
+		if (stopCondition.apply(url))
+			return;
+		
 		List<String> linksToFollow = linksToFollowRegexp.parseData(content);
 		for (String link : linksToFollow) {
 			String normalizedUrl = normalizer.normalize(link);

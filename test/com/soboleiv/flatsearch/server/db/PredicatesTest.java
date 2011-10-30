@@ -10,10 +10,47 @@ import com.soboleiv.flatsearch.shared.Place;
 
 public class PredicatesTest {
 	@Test
-	public void shouldSurviveNotInitedClass() {
+	public void shouldEqPageItWasFetchedFrom() {
+		Place place = new Place();
+		place.setWasFoundAt("aaa");
+		boolean res = Predicates.wasFoundAt("aaa").appliesTo(place);
+		Assert.assertTrue(res);
+	}
+	
+	@Test
+	public void shouldNeqPageItWasFetchedFromIfItIsDifferent() {
+		Place place = new Place();
+		place.setWasFoundAt("aaa");
+		boolean res = Predicates.wasFoundAt("aab").appliesTo(place);
+		Assert.assertFalse(res);
+	}
+	
+	@Test
+	public void shouldNeqToEverythingIfIsNull() {
+		Place place = new Place();
+		place.setWasFoundAt("aaa");
+		boolean res = Predicates.wasFoundAt(null).appliesTo(place);
+		Assert.assertFalse(res);
+		
+		place.setWasFoundAt(null);
+		res = Predicates.wasFoundAt(null).appliesTo(place);
+		Assert.assertFalse(res);
+	}
+	
+	
+	@Test
+	public void shouldSurviveNotInitedClassInSqlLikeBehaviour() {
 		Place place = new Place();
 		place.setWasFetchedAt(new Date());
 		boolean res = Predicates.fetchTime(null).appliesTo(place);
+		Assert.assertFalse(res);
+	}
+	
+	@Test
+	public void shouldTreatNullBoundariesAsNotExisting() {
+		Place place = new Place();
+		place.setWasFetchedAt(new Date());
+		boolean res = Predicates.fetchTime(Interval.between((Date) null, null)).appliesTo(place);
 		Assert.assertTrue(res);
 	}
 	

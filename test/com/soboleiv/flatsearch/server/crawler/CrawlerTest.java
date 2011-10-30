@@ -1,6 +1,6 @@
 package com.soboleiv.flatsearch.server.crawler;
 
-import org.easymock.EasyMock;
+import static org.easymock.EasyMock.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +9,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+@SuppressWarnings("unchecked")
 public class CrawlerTest {
 	Crawler crawler;
 	
@@ -72,12 +73,12 @@ public class CrawlerTest {
 	public void shouldNotCrawlPageIfVisitedAlready()
 	{
 		crawler.visited = Sets.newHashSet("http://ya.ru");		
-		crawler.urlReader = EasyMock.createMock(UrlReader.class);
-		EasyMock.replay(crawler.urlReader);
+		crawler.urlReader = createMock(UrlReader.class);
+		replay(crawler.urlReader);
 		
 		crawler.crawlPage("http://ya.ru");
 		
-		EasyMock.verify(crawler.urlReader);
+		verify(crawler.urlReader);
 	}
 	
 	@Test
@@ -85,42 +86,55 @@ public class CrawlerTest {
 	{
 		crawler = new Crawler(null, null) {
 			@Override
-			void extractLinksToFollow(String content) {
+			void extractLinksToFollow(String url, String content) {
 			}
 		};
 		
 		crawler.pagesToVisit = Lists.newArrayList("http://not-visited.ru");
 		crawler.visited = Sets.newHashSet();		
-		UrlReader reader = EasyMock.createMock(UrlReader.class);
-		EasyMock.expect(reader.readUrlContent("http://not-visited.ru")).andReturn("");
-		EasyMock.replay(reader);
+		UrlReader reader = createMock(UrlReader.class);
+		expect(reader.readUrlContent("http://not-visited.ru")).andReturn("");
+		replay(reader);
 		
 		crawler.urlReader = reader;
 		crawler.crawlPage("http://not-visited.ru");
 		
-		EasyMock.verify(crawler.urlReader);
+		verify(crawler.urlReader);
 		Assert.assertEquals(0, crawler.visited.size());
 		Assert.assertEquals(1, crawler.pagesToVisit.size());
 	}
 	
 	@Test
 	public void shouldNormalizeExtractedUrls() throws Exception {
-		UrlNormalizer mockNormalizer = EasyMock.createMock(UrlNormalizer.class);
-		EasyMock.expect(mockNormalizer.normalize("urlBefore")).andReturn("urlAfter");
-		EasyMock.replay(mockNormalizer);
-		
-		RegexpDataMapper<String> linksToFollowRegexp = EasyMock.createMock(RegexpDataMapper.class);
-		EasyMock.expect(linksToFollowRegexp.parseData("content")).andReturn(Lists.newArrayList("urlBefore"));
-		EasyMock.replay(linksToFollowRegexp);
+		UrlNormalizer mockNormalizer = createMock(UrlNormalizer.class);
+		expect(mockNormalizer.normalize("urlBefore")).andReturn("urlAfter");
+		replay(mockNormalizer);
+				
+		RegexpDataMapper<String> linksToFollowRegexp = createMock(RegexpDataMapper.class);
+		expect(linksToFollowRegexp.parseData("content")).andReturn(Lists.newArrayList("urlBefore"));
+		replay(linksToFollowRegexp);
 		
 		crawler.setNormalizer(mockNormalizer);
 		crawler.linksToFollowRegexp = linksToFollowRegexp;
 		crawler.pagesToVisit = Lists.newLinkedList();
+		crawler.stopCondition = Predicates.alwaysFalse();
 		
-		crawler.extractLinksToFollow("content");
+		crawler.extractLinksToFollow("urlBefore", "content");
 		
 		Assert.assertEquals(1, crawler.pagesToVisit.size());
 		Assert.assertEquals("urlAfter", crawler.pagesToVisit.get(0));
+	}
+	
+	@Test
+	public void shouldNotExtractLinksToFollowIfCrawlingConditionSignalsNotAllowed() {
+		RegexpDataMapper<String> linksToFollowRegexp = createMock(RegexpDataMapper.class);
+		expect(linksToFollowRegexp.parseData(isA(String.class))).andThrow(new AssertionError(""));
+		replay(linksToFollowRegexp);
+		
+		crawler.linksToFollowRegexp = linksToFollowRegexp;
+		crawler.stopCondition = Predicates.alwaysTrue();
+		
+		crawler.extractLinksToFollow("url", "content");		
 	}
 	
 	@Test

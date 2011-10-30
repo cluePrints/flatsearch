@@ -6,13 +6,22 @@ import com.db4o.query.Predicate;
 import com.google.common.base.Function;
 import com.soboleiv.flatsearch.shared.Interval;
 import com.soboleiv.flatsearch.shared.Place;
-
+/**
+ * TODO: I bet existence of this class is a good reason to use some scala on the serverside.
+ */
 public class Predicates {
 	public static Predicate<Place> ALL = new Predicate<Place>() {
 		public boolean match(Place arg0) {
 			return true;
 		}
 	};
+	
+	public static Predicate<Place> NEVER = new Predicate<Place>() {
+		public boolean match(Place arg0) {
+			return false;
+		}
+	};
+
 
 	public static Predicate<Place> fetchTime(Interval<Date> interval) {
 		return bounded(GET_FETCH_TIME, interval);
@@ -22,9 +31,25 @@ public class Predicates {
 		return bounded(GET_PRICE, interval);
 	}
 	
+	public static Predicate<Place> wasFoundAt(String url) {
+		return eq(GET_FOUND_AT, url);
+	}
+	
+	public static <T> Predicate<Place> eq(final Function<Place, T> field, final T exactValue) {
+		if (exactValue == null)
+			return NEVER;
+
+		return new Predicate<Place>() {
+			@Override
+			public boolean match(Place place) {
+				return exactValue.equals(field.apply(place));
+			}
+		};
+	}
+	
 	public static <T extends Comparable<T>> Predicate<Place> bounded(final Function<Place, T> field, final Interval<T> interval) {
 		if (interval == null)
-			return ALL;
+			return NEVER;
 		
 		return new Predicate<Place>() {
 			@Override
@@ -63,6 +88,12 @@ public class Predicates {
 	private static final Function<Place, Integer> GET_PRICE = new Function<Place, Integer>() {
 		public Integer apply(Place arg0) {
 			return arg0.getPriceUsd();
+		}
+	};
+	
+	private static final Function<Place, String> GET_FOUND_AT = new Function<Place, String>() {
+		public String apply(Place arg0) {
+			return arg0.getWasFoundAt();
 		}
 	};
 	

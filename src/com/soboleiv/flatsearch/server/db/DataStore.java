@@ -27,6 +27,10 @@ public class DataStore<V> {
 		return serializationSafe(res);
 	}
 	
+	public int count(Predicate<V> arg0) {
+		return db.query(arg0).size();
+	}
+	
 	public Collection<V> getAllByExample(V ex){
 	    ObjectSet<V> results = db.queryByExample(ex);
 		return serializationSafe(results);
