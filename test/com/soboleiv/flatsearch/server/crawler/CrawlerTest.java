@@ -145,7 +145,7 @@ public class CrawlerTest {
 	public void shouldCrawlMultipleTimesIfNewPagesFound() {
 		preparePartialCrawlerWithExpectedHitsAndPagesFound(5);
 	
-		crawler.setMaxHits(2);
+		crawler.setStopCondition(StopConditions.limitByMaxHits(crawler, 2));
 		crawler.start();
 	}
 	
@@ -153,7 +153,7 @@ public class CrawlerTest {
 	public void shouldCrawlMultipleTimesIfNewPagesFoundAndFailAsMockCrawlerWillThrowAnError() {
 		preparePartialCrawlerWithExpectedHitsAndPagesFound(1);
 	
-		crawler.setMaxHits(50);
+		crawler.setStopCondition(StopConditions.limitByMaxHits(crawler, 50));
 		crawler.start();
 	}
 	

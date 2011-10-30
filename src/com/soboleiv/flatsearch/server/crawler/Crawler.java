@@ -70,13 +70,9 @@ public class Crawler {
 		pagesToVisit.add(startingPage);
 		visited = Sets.newHashSet();
 	}
-	
-	public void setMaxHits(int maxVisits) {
-		this.maxHits = maxVisits;
-	}
-	
-	public Set<String> getVisited() {
-		return visited;
+
+	public void setStopCondition(Predicate<String> stopCondition) {
+		this.stopCondition = stopCondition;
 	}
 	
 	public List<CrawledResult> getData() {

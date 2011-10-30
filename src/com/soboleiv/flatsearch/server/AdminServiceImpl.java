@@ -8,6 +8,7 @@ import com.soboleiv.flatsearch.client.admin.AdminService;
 import com.soboleiv.flatsearch.server.crawler.BaseUrlNormalizer;
 import com.soboleiv.flatsearch.server.crawler.CheckDataSourceCommand;
 import com.soboleiv.flatsearch.server.crawler.Crawler;
+import com.soboleiv.flatsearch.server.crawler.StopConditions;
 import com.soboleiv.flatsearch.server.crawler.UrlNormalizer;
 import com.soboleiv.flatsearch.server.transorm.RDTransformer;
 import com.soboleiv.flatsearch.server.transorm.Transformer;
@@ -30,7 +31,7 @@ public class AdminServiceImpl extends RemoteServiceServlet implements AdminServi
 		String pageRegexp = "<a class=\"\\w+\" href=\"(/lookforapp/\\d+.?)\">";
 		Crawler crawler2 = new Crawler(pageRegexp, startingPage);
 		Transformer transformer2 = new RDTransformer();
-		crawler2.setMaxHits(2);
+		crawler2.setStopCondition(StopConditions.limitByMaxHits(crawler2, 2));
 		UrlNormalizer normalizer = new BaseUrlNormalizer("http://www.realdruzi.com.ua");
 		crawler2.setNormalizer(normalizer);
 		CheckDataSourceCommand rdCommand = new CheckDataSourceCommand(crawler2, transformer2);
