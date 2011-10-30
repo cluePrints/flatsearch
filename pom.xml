@@ -11,7 +11,7 @@
 		<testOutputDirectory>target/test-classes</testOutputDirectory>
 	</build>
 	<properties>
-		<gwtMapsBindingPath>D:\Repositories\git\flatsearch\lib\gwt-maps.jar</gwtMapsBindingPath>
+		<gwtMapsBindingPath>${basedir}/lib/gwt-maps.jar</gwtMapsBindingPath>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -60,6 +60,12 @@
   		<version>BUILT FROM TRUNK FOR GWT 2.2.0</version>
   		<scope>system</scope>
   		<systemPath>${gwtMapsBindingPath}</systemPath>
+  	</dependency>
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>4.10</version>
+  		<scope>test</scope>
   	</dependency>
 	</dependencies>
 </project>
