@@ -73,12 +73,4 @@ public class Predicates {
 		
 		return Integer.signum(a.compareTo(b));
 	}
-
-	private static long toInt(Date date) {
-		if (date == null) {
-			return -1;
-		} else {
-			return date.getTime();
-		}
-	}
 }

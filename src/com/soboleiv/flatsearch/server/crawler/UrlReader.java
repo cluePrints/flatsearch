@@ -1,7 +1,6 @@
 package com.soboleiv.flatsearch.server.crawler;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -13,12 +12,8 @@ import org.apache.http.util.ByteArrayBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Files;
-
 public class UrlReader {
 	private static Logger log = LoggerFactory.getLogger(Crawler.class);
-
-	private static boolean isDebugEnabled = false;
 
 	public String readUrlContent(String urlStr) {
 		try {

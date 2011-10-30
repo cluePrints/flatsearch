@@ -3,39 +3,72 @@ package com.soboleiv.flatsearch.server.crawler;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+/**
+ * As crawler is parsing 1 site at a time, it's single-threaded due to perverted sense of nettiquete.  
+ */
 public class Crawler {
-	private RegexpDataMapper<String> linksToFollowRegexp;
-
-	private List<String> pagesToVisit = Lists.newLinkedList();
-	private Set<String> visited = Sets.newHashSet();
-	private List<CrawledResult> data = Lists.newLinkedList();
+	private static Logger log = LoggerFactory.getLogger(Crawler.class);
 	
-	private UrlReader urlReader = new UrlReader();
-	private UrlNormalizer normalizer = UrlNormalizer.NONE;
+	RegexpDataMapper<String> linksToFollowRegexp;
+
+	List<String> pagesToVisit;
+	Set<String> visited;
+	List<CrawledResult> data = Lists.newLinkedList();
+	
+	UrlReader urlReader = new UrlReader();
+	UrlNormalizer normalizer = UrlNormalizer.NONE;
 	
 	private int maxHits = Integer.MAX_VALUE;
+	String startingPage;
+	
+	Predicate<String> stopCondition = new Predicate<String>() {
+		public boolean apply(String justVisitedPage) {
+			return visited.size() >= maxHits;
+		}
+	};
 
 	public Crawler(String linksToFollowRegexp,
 			String startingPage) {
 		super();
 		this.linksToFollowRegexp = new ToStringRegexpMapper(linksToFollowRegexp);
-		this.pagesToVisit.add(startingPage);
+		this.startingPage = startingPage;
 	}
 
 	public void start() {
+		reset();		
+		boolean timeToStop;
 		do {
-			processPage(pagesToVisit.get(0));
-		} while (!pagesToVisit.isEmpty() && visited.size() < maxHits);
-		logDataCaptured();
+			/* TODO: start from the newest if possible and move to latest
+			 * spotting already visited DATA(not page) could be good signal to stop
+			 * and we don't know about data at this stage, but stop condition could :)
+			 **/
+			String visited = crawlPageAndMarkVisited();
+			timeToStop = stopCondition.apply(visited);
+		} while (!pagesToVisit.isEmpty() && !timeToStop);
 	}
 
-	public void logDataCaptured() {
-		for (CrawledResult dataPoint : data) {
-			System.out.println(dataPoint);
-		}
+	String crawlPageAndMarkVisited() {
+		String page = pagesToVisit.get(0);
+		
+		crawlPage(page);
+		
+		pagesToVisit.remove(0);
+		visited.add(page);
+		
+		return page;
+	}
+
+	void reset() {
+		pagesToVisit = Lists.newLinkedList();
+		pagesToVisit.add(startingPage);
+		visited = Sets.newHashSet();
 	}
 	
 	public void setMaxHits(int maxVisits) {
@@ -50,25 +83,26 @@ public class Crawler {
 		return data;
 	}
 
-	private void processPage(String url) {
+	void crawlPage(String url) {
 		if (!visited.contains(url)) {
-			System.out.println("Processing: " + url);
+			log.debug("Processing: {}", url);
 			String content = urlReader.readUrlContent(url);
 
-			List<String> linksToFollow = linksToFollowRegexp.parseData(content);
-			for (String link : linksToFollow) {
-				pagesToVisit.add(normalizer.normalize(link));
-			}
-			System.out.println("Added " + linksToFollow.size() + " links to follow.");
+			extractLinksToFollow(content);
 
 			data.add(new CrawledResult(content, url));
-			visited.add(url);
 
-			System.out.println("Progress: " + visited.size() + " done, "
-					+ pagesToVisit.size() + " left. ");
+			log.debug("Progress: {} done, {} left. ", visited.size(), pagesToVisit.size());
 		}
+	}
 
-		pagesToVisit.remove(url);
+	void extractLinksToFollow(String content) {
+		List<String> linksToFollow = linksToFollowRegexp.parseData(content);
+		for (String link : linksToFollow) {
+			String normalizedUrl = normalizer.normalize(link);
+			pagesToVisit.add(normalizedUrl);
+		}
+		log.debug("Added {} links to follow.", linksToFollow.size());
 	}
 	
 	public void setNormalizer(UrlNormalizer normalizer) {
