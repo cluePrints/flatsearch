@@ -11,7 +11,7 @@ public class ToArrayRegexpMapper extends RegexpDataMapper<String[]>{
 		log.debug("Created with regexp: "+dataRegexp);
 	}
 	
-	protected String[] mapMatch(SanitizingMatcher matcher) {
+	protected String[] mapMatch(InputProcessor matcher) {
 		String[] result = new String[matcher.groupCount()];
 		for (int i = 0; i < matcher.groupCount() ; i++) {
 			result[i] = matcher.group(i + 1);

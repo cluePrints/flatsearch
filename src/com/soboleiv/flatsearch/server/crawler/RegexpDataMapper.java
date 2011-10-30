@@ -23,22 +23,22 @@ abstract class RegexpDataMapper<T> {
 					"Group count should be more then 0 - they point to data to be captured.");
 
 		List<T> results = new LinkedList<T>();
-		SanitizingMatcher secure = new SanitizingMatcher(matcher);
-		while (matcher.find()) {
+		InputProcessor secure = new InputProcessor(matcher);
+		while (secure.find()) {
 			T result = mapMatch(secure);
 			results.add(result);
 		}
 		return results;
 	}
 	
-	protected abstract T mapMatch(SanitizingMatcher matcher);
+	protected abstract T mapMatch(InputProcessor matcher);
 }
 
-class SanitizingMatcher {
+class InputProcessor {
 	private InputsSanitizer checker = new InputsSanitizer();
 	private Matcher matcher;
 	
-	public SanitizingMatcher(Matcher matcher) {
+	public InputProcessor(Matcher matcher) {
 		super();
 		this.matcher = matcher;
 	}

@@ -6,7 +6,7 @@ public class ToStringRegexpMapper extends RegexpDataMapper<String>{
 		this.dataRegexp = dataRegexp;
 	}
 	
-	protected String mapMatch(SanitizingMatcher matcher) {
+	protected String mapMatch(InputProcessor matcher) {
 		return matcher.group(1);
 	}
 }
