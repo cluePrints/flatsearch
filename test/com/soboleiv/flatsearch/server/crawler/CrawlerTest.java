@@ -141,12 +141,41 @@ public class CrawlerTest {
 		Assert.assertEquals(2, crawler.pagesToVisit.size());
 	}
 
+	@Test
+	public void shouldCrawlMultipleTimesIfNewPagesFound() {
+		preparePartialCrawlerWithExpectedHitsAndPagesFound(5);
+	
+		crawler.setMaxHits(2);
+		crawler.start();
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void shouldCrawlMultipleTimesIfNewPagesFoundAndFailAsMockCrawlerWillThrowAnError() {
+		preparePartialCrawlerWithExpectedHitsAndPagesFound(1);
+	
+		crawler.setMaxHits(50);
+		crawler.start();
+	}
+	
 	private void preparePartialCrawlerWithExpectedHitsOf(final int allowedCount) {
+		preparePartialCrawlerWithExpectedHitsOf(allowedCount, false);
+	}
+	
+	private void preparePartialCrawlerWithExpectedHitsAndPagesFound(final int allowedCount) {
+		preparePartialCrawlerWithExpectedHitsOf(allowedCount, true);
+	}
+	
+	private void preparePartialCrawlerWithExpectedHitsOf(final int allowedCount, final boolean simulatePagesFound) {
 		crawler = new Crawler(null, null){
 			int count;
 			@Override
 			String crawlPageAndMarkVisited() {
-				Assert.assertTrue(allowedCount>=count++);
+				Assert.assertTrue(allowedCount>=count++);							
+				if (simulatePagesFound) {
+					pagesToVisit.add(String.valueOf(count));
+					String page = pagesToVisit.get(0);
+					visited.add(page);
+				}
 				pagesToVisit.remove(0);
 				return "";
 			}
